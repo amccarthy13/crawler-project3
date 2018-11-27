@@ -18,6 +18,7 @@ typedef struct {
     int depthLimit = 10;
     int pagesLimit = 10;
     int linkedSitesLimit = 10;
+    int port = 80;
     vector<string> startUrls;
 }Config;
 
@@ -71,5 +72,41 @@ void scheduleCrawlers() {
 }
 
 void startCrawler(string hostname, int currentDepth, CrawlerState &crawlerState) {
+    ClientSocket clientSocket = ClientSocket(hostname, config.port, config.pagesLimit, config.crawlDelay);
+    SiteStats stats = clientSocket.startDiscovering();
 
+    m_mutex.lock();
+    cout << "Website: " << stats.hostname << endl;
+    cout << "Depth: " << currentDepth << endl;
+    cout << "Pages Discovered: " << stats.discoveredPages.size() << endl;
+    cout << "Pages Failed to Discover: " << stats.numberOfPagesFailed << endl;
+    cout << "Number of Linked Sites: " << stats.linkedSites.size() << endl;
+    if (stats.minResponseTime < 0) cout << "Min Response Time: N.A." << endl;
+    else cout << "Min. Response Time: " << stats.minResponseTime << "ms" << endl;
+    if (stats.maxResponseTime < 0) cout << "Max. Response Time: N.A" << endl;
+    else cout << "Max. Response Time: " << stats.maxResponseTime << "ms" << endl;
+    if (stats.averageResponseTime < 0) cout << "Average Response Time: N.A" << endl;
+    else cout << "Average Response Time: " << stats.averageResponseTime << "ms" << endl;
+    if (!stats.discoveredPages.empty()) {
+        cout << "List of visited pages:" << endl;
+        cout << "    " << setw(15) << "Response Time" << "    " << "URL" << endl;
+        for (auto page : stats.discoveredPages) {
+            cout << "    " << setw(13) << page.second << "ms" << "    " << page.first << endl;
+        }
+    }
+
+    if (currentDepth < config.depthLimit) {
+        for (int i = 0; i < min(int(stats.linkedSites.size()), config.linkedSitesLimit); i++) {
+            string site = stats.linkedSites[i];
+            if (!crawlerState.discoveredSites[site]) {
+                crawlerState.pendingSites.push(make_pair(site, currentDepth+1));
+                crawlerState.discoveredSites[site] = true;
+            }
+        }
+    }
+    crawlerState.threadsCount --;
+    threadFinished = true;
+    m_mutex.unlock();
+
+    m_condVar.notify_one();
 }

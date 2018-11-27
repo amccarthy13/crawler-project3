@@ -17,7 +17,7 @@ typedef struct {
     int numberOfPagesFailed = 0;
     vector<string> linkedSites;
     vector< pair<string, double> > discoveredPages;
-} SiteStats;
+}SiteStats;
 
 class ClientSocket {
     public:
