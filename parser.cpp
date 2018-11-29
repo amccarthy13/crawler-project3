@@ -8,8 +8,8 @@ using namespace std;
 
 string getHostnameFromURL(string url) {
     int offset = 0;
-    offset = offset==0 && url.compare(0, 8, "https://")==0 ? 8 : offset;
-    offset = offset==0 && url.compare(0, 7, "http://" )==0 ? 7 : offset;
+    offset = offset == 0 && url.compare(0, 8, "https://") == 0 ? 8 : offset;
+    offset = offset == 0 && url.compare(0, 7, "http://") == 0 ? 7 : offset;
 
     size_t pos = url.find("/", offset);
     string domain = url.substr(offset, (pos == string::npos ? url.length() : pos) - offset);
@@ -19,11 +19,11 @@ string getHostnameFromURL(string url) {
 
 string getHostPathFromURL(string url) {
     int offset = 0;
-    offset = offset==0 && url.compare(0, 8, "https://")==0 ? 8 : offset;
-    offset = offset==0 && url.compare(0, 7, "http://" )==0 ? 7 : offset;
+    offset = offset == 0 && url.compare(0, 8, "https://") == 0 ? 8 : offset;
+    offset = offset == 0 && url.compare(0, 7, "http://") == 0 ? 7 : offset;
 
     size_t pos = url.find("/", offset);
-    string path = pos==string::npos ? "/" : url.substr(pos);
+    string path = pos == string::npos ? "/" : url.substr(pos);
 
     pos = path.find_first_not_of('/');
     if (pos == string::npos) path = "/";
@@ -33,7 +33,7 @@ string getHostPathFromURL(string url) {
 
 vector<string> extractImages(string httpText) {
     string httpRaw = reformatHttpResponse(httpText);
-    cout << httpRaw << endl;
+    cout << httpText << endl;
     const string imgStart = "img src=\"";
 
     const string urlEndChars = "\"#?, ";
@@ -60,7 +60,7 @@ vector<string> extractImages(string httpText) {
     return extractedUrls;
 }
 
-vector< pair<string, string> > extractUrls(string httpText) {
+vector<pair<string, string> > extractUrls(string httpText) {
     string httpRaw = reformatHttpResponse(httpText);
 
     const string urlStart[] = {"href=\"", "href = \"", "http://", "https://"};

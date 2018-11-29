@@ -32,6 +32,8 @@ class ClientSocket {
 
     string createHttpRequest(string host, string path);
 
+    string generateUUID();
+
 public:
     ClientSocket(string hostname, int port = 80, int pagesLimit = -1, int crawlDelay = 1000);
 

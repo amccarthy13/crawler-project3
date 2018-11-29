@@ -4,9 +4,12 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <chrono>
+#include <cstdlib>
 
 using namespace std;
 using namespace std::chrono;
+
+const string CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 ClientSocket::ClientSocket(string hostname, int port, int pagesLimit, int crawlDelay) {
     this->pagesLimit = pagesLimit;
@@ -54,9 +57,10 @@ string ClientSocket::closeConnection() {
 }
 
 string ClientSocket::createHttpRequest(string host, string path) {
-    string request = "";
+    string request;
     request += "GET " + path + " HTTP/1.1\r\n";
     request += "HOST:" + host + "\r\n";
+    request += "Cookie: userId=" + generateUUID() + "\r\n";
     request += "Connection: close\r\n\r\n";
     return request;
 }
@@ -129,13 +133,11 @@ SiteStats ClientSocket::startDiscovering() {
 
         }
 
-
-
         this->closeConnection();
 
         stats.discoveredPages.push_back(make_pair(hostname + path, responseTime));
 
-        vector<pair<string, string> > extractedUrls = extractUrls(httpResponse);
+        vector<pair<string, string>> extractedUrls = extractUrls(httpResponse);
         for (auto url : extractedUrls) {
             if (url.first == "" || url.first == hostname) {
                 if (!discoveredPages[url.second]) {
@@ -161,4 +163,28 @@ SiteStats ClientSocket::startDiscovering() {
         stats.averageResponseTime = totalResponseTime / stats.discoveredPages.size();
 
     return stats;
+}
+
+string ClientSocket::generateUUID() {
+    string uuid = string(36, ' ');
+    int rnd = 0;
+    int r = 0;
+
+    uuid[8] = '-';
+    uuid[13] = '-';
+    uuid[18] = '-';
+    uuid[23] = '-';
+
+    uuid[14] = '4';
+
+    for (int i = 0; i < 36; i++) {
+        if (i != 8 && i != 13 && i != 18 && i != 14 && i != 23) {
+            if (rnd <= 0x02) {
+                rnd = 0x2000000 + (std::rand() * 0x1000000) | 0;
+            }
+            rnd >>= 4;
+            uuid[i] = CHARS[(i == 19) ? ((rnd & 0xf) & 0x3) | 0x8 : rnd & 0xf];
+        }
+    }
+    return uuid;
 }
