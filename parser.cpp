@@ -8,10 +8,10 @@ using namespace std;
 
 string getHostnameFromURL(string url) {
     int offset = 0;
-    offset = offset == 0 && url.compare(0, 8, "https://") == 0 ? 8 : offset;
-    offset = offset == 0 && url.compare(0, 7, "https://") == 0 ? 7 : offset;
+    offset = offset==0 && url.compare(0, 8, "https://")==0 ? 8 : offset;
+    offset = offset==0 && url.compare(0, 7, "http://" )==0 ? 7 : offset;
 
-    size_t pos = url.find('/', offset);
+    size_t pos = url.find("/", offset);
     string domain = url.substr(offset, (pos == string::npos ? url.length() : pos) - offset);
 
     return domain;
@@ -19,16 +19,45 @@ string getHostnameFromURL(string url) {
 
 string getHostPathFromURL(string url) {
     int offset = 0;
-    offset = offset == 0 && url.compare(0, 8, "https://") == 0 ? 8 : offset;
-    offset = offset == 0 && url.compare(0, 7, "http://") == 0 ? 7 : offset;
+    offset = offset==0 && url.compare(0, 8, "https://")==0 ? 8 : offset;
+    offset = offset==0 && url.compare(0, 7, "http://" )==0 ? 7 : offset;
 
-    size_t pos = url.find('/', offset);
-    string path = pos == string::npos ? "/" : url.substr(pos);
+    size_t pos = url.find("/", offset);
+    string path = pos==string::npos ? "/" : url.substr(pos);
 
     pos = path.find_first_not_of('/');
-    if (pos == string::npos) path = '/';
+    if (pos == string::npos) path = "/";
     else path.erase(0, pos - 1);
     return path;
+}
+
+vector<string> extractImages(string httpText) {
+    string httpRaw = reformatHttpResponse(httpText);
+    cout << httpRaw << endl;
+    const string imgStart = "img src=\"";
+
+    const string urlEndChars = "\"#?, ";
+
+    vector<string> extractedUrls;
+
+
+    while (true) {
+
+        int startPos = httpRaw.find(imgStart);
+
+        if (startPos == string::npos) break;
+
+        startPos += imgStart.length();
+
+        int endPos = httpRaw.find_first_of(urlEndChars, startPos);
+
+        string url = httpRaw.substr(startPos, endPos - startPos);
+
+        extractedUrls.push_back(url);
+
+        httpRaw.erase(0, endPos);
+    }
+    return extractedUrls;
 }
 
 vector< pair<string, string> > extractUrls(string httpText) {
@@ -81,7 +110,7 @@ bool verifyType(string url) {
 }
 
 bool verifyDomain(string url) {
-    string allowedDomains[] = {".com", ".sg", ".net", ".co", ".org", ".me"};
+    string allowedDomains[] = {".com", ".sg", ".net", ".co", ".org", ".me", ".edu"};
     bool flag = true;
     for (auto type : allowedDomains)
         if (hasSuffix(url, type)) {

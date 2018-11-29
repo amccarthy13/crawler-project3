@@ -17,14 +17,15 @@ typedef struct {
     int maxThreads = 10;
     int depthLimit = 10;
     int pagesLimit = 10;
-    int linkedSitesLimit = 10;
+    int linkedSitesLimit = 20;
     int port = 80;
-    vector<string> startUrls;
-}Config;
+    string directory = "";
+    string startUrl = "sandlab.cs.uchicago.edu";
+} Config;
 
 struct CrawlerState {
     int threadsCount;
-    queue< pair<string, int> > pendingSites;
+    queue<pair<string, int> > pendingSites;
     map<string, bool> discoveredSites;
 };
 
@@ -35,24 +36,51 @@ condition_variable m_condVar;
 bool threadFinished;
 
 void initialize();
-void scheduleCrawlers();
+
+void schedule();
+
 void startCrawler(string baseUrl, int currentDepth, CrawlerState &crawlerState);
 
-int main(int argc, const char * argv[]) {
+int main(int argc, char *argv[]) {
+    /*if (argc < 2) {
+        cout << "Invalid Parameters" << endl;
+        return 0;
+    } */
+    for (int i = 1; i < argc - 1; i++) {
+        if (strcmp(argv[i], "-n") == 0) {
+            config.maxThreads = atoi(argv[i + 1]);
+        }
+        if (strcmp(argv[i], "-h") == 0) {
+            config.startUrl = argv[i + 1];
+        }
+        if (strcmp(argv[i], "-p") == 0) {
+            config.port = atoi(argv[i + 1]);
+        }
+        if (strcmp(argv[i], "-f") == 0) {
+            config.directory = argv[i + 1];
+        }
+    }/*
+    if (config.startUrl == "") {
+        cerr << "No start url provided" << endl;
+        return 0;
+    }
+
+    if (config.directory == "") {
+        cerr << "No download directory provided" << endl;
+        return 0;
+    } */
     initialize();
-    scheduleCrawlers();
+    schedule();
     return 0;
 }
 
 void initialize() {
     crawlerState.threadsCount = 0;
-    for (auto url: config.startUrls) {
-        crawlerState.pendingSites.push(make_pair(getHostnameFromURL(url), 0));
-        crawlerState.discoveredSites[getHostnameFromURL(url)] = true;
-    }
+    crawlerState.pendingSites.push(make_pair(getHostnameFromURL(config.startUrl), 0));
+    crawlerState.discoveredSites[getHostnameFromURL(config.startUrl)] = true;
 }
 
-void scheduleCrawlers() {
+void schedule() {
     while (crawlerState.threadsCount != 0 || !crawlerState.pendingSites.empty()) {
         m_mutex.lock();
         threadFinished = false;
@@ -67,7 +95,7 @@ void scheduleCrawlers() {
         m_mutex.unlock();
 
         unique_lock<mutex> m_lock(m_mutex);
-        while(!threadFinished) m_condVar.wait(m_lock);
+        while (!threadFinished) m_condVar.wait(m_lock);
     }
 }
 
@@ -99,12 +127,12 @@ void startCrawler(string hostname, int currentDepth, CrawlerState &crawlerState)
         for (int i = 0; i < min(int(stats.linkedSites.size()), config.linkedSitesLimit); i++) {
             string site = stats.linkedSites[i];
             if (!crawlerState.discoveredSites[site]) {
-                crawlerState.pendingSites.push(make_pair(site, currentDepth+1));
+                crawlerState.pendingSites.push(make_pair(site, currentDepth + 1));
                 crawlerState.discoveredSites[site] = true;
             }
         }
     }
-    crawlerState.threadsCount --;
+    crawlerState.threadsCount--;
     threadFinished = true;
     m_mutex.unlock();
 
