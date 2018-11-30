@@ -77,7 +77,7 @@ SiteStats ClientSocket::startDiscovering() {
 
         high_resolution_clock::time_point startTime = high_resolution_clock::now();
 
-        if (this->startConnection() != "") {
+        if (!this->startConnection().empty()) {
             stats.numberOfPagesFailed++;
             continue;
         }
@@ -135,11 +135,11 @@ SiteStats ClientSocket::startDiscovering() {
 
         this->closeConnection();
 
-        stats.discoveredPages.push_back(make_pair(hostname + path, responseTime));
+        stats.discoveredPages.emplace_back(hostname + path, responseTime);
 
         vector<pair<string, string>> extractedUrls = extractUrls(httpResponse);
         for (auto url : extractedUrls) {
-            if (url.first == "" || url.first == hostname) {
+            if (url.first.empty() || url.first == hostname) {
                 if (!discoveredPages[url.second]) {
                     pendingPages.push(url.second);
                     discoveredPages[url.second] = true;
@@ -168,7 +168,6 @@ SiteStats ClientSocket::startDiscovering() {
 string ClientSocket::generateUUID() {
     string uuid = string(36, ' ');
     int rnd = 0;
-    int r = 0;
 
     uuid[8] = '-';
     uuid[13] = '-';
@@ -180,7 +179,7 @@ string ClientSocket::generateUUID() {
     for (int i = 0; i < 36; i++) {
         if (i != 8 && i != 13 && i != 18 && i != 14 && i != 23) {
             if (rnd <= 0x02) {
-                rnd = 0x2000000 + (std::rand() * 0x1000000) | 0;
+                rnd = 0x2000000 + (rand() * 0x1000000) | 0;
             }
             rnd >>= 4;
             uuid[i] = CHARS[(i == 19) ? ((rnd & 0xf) & 0x3) | 0x8 : rnd & 0xf];

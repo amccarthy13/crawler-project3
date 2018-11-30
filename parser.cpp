@@ -13,7 +13,6 @@ string getHostnameFromURL(string url) {
 
     size_t pos = url.find("/", offset);
     string domain = url.substr(offset, (pos == string::npos ? url.length() : pos) - offset);
-
     return domain;
 }
 
@@ -33,7 +32,6 @@ string getHostPathFromURL(string url) {
 
 vector<string> extractImages(string httpText) {
     string httpRaw = reformatHttpResponse(httpText);
-    cout << httpText << endl;
     const string imgStart = "img src=\"";
 
     const string urlEndChars = "\"#?, ";

@@ -35,7 +35,7 @@ class ClientSocket {
     string generateUUID();
 
 public:
-    ClientSocket(string hostname, int port = 80, int pagesLimit = -1, int crawlDelay = 1000);
+    explicit ClientSocket(string hostname, int port = 80, int pagesLimit = -1, int crawlDelay = 1000);
 
     SiteStats startDiscovering();
 };

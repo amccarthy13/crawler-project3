@@ -36,22 +36,6 @@ string
 vector
 -
 
-/Users/andrewmccarthy/Documents/GitHub/crawler-project3/socket.cpp
-socket.h
-/Users/andrewmccarthy/Documents/GitHub/crawler-project3/socket.h
-parser.h
-/Users/andrewmccarthy/Documents/GitHub/crawler-project3/parser.h
-iostream
--
-netdb.h
--
-unistd.h
--
-chrono
--
-cstdlib
--
-
 /Users/andrewmccarthy/Documents/GitHub/crawler-project3/socket.h
 string
 -

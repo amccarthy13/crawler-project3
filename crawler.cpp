@@ -20,7 +20,7 @@ typedef struct {
     int linkedSitesLimit = 20;
     int port = 80;
     string directory = "";
-    string startUrl = "http://www.fedex.com";
+    string startUrl = "eychtipi.cs.uchicago.edu";
 } Config;
 
 struct CrawlerState {
