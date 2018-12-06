@@ -11,18 +11,14 @@ using namespace std;
 
 typedef struct {
     string hostname;
-    double averageResponseTime = -1;
-    double minResponseTime = -1;
-    double maxResponseTime = -1;
     int numberOfPagesFailed = 0;
-    vector<string> linkedSites;
-    vector<pair<string, double> > discoveredPages;
+    vector<pair <string, string> > linkedSites;
+    vector<pair <string, string> > discoveredPages;
 } SiteStats;
 
 class ClientSocket {
-    string hostname;
-    int sock, pagesLimit, port, crawlDelay;
-    queue<string> pendingPages;
+    pair<string,string> hostname;
+    int sock, port;
     map<string, bool> discoveredPages;
     map<string, bool> discoveredLinkedSites;
 
@@ -35,7 +31,7 @@ class ClientSocket {
     string generateUUID();
 
 public:
-    explicit ClientSocket(string hostname, int port = 80, int pagesLimit = -1, int crawlDelay = 1000);
+    explicit ClientSocket(pair<string, string> hostname, int port = 80);
 
     SiteStats startDiscovering();
 };

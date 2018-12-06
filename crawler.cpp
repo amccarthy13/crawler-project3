@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "socket.h"
 #include "parser.h"
 #include <iostream>
@@ -13,19 +15,15 @@
 using namespace std;
 
 typedef struct {
-    int crawlDelay = 1000;
     int maxThreads = 10;
-    int depthLimit = 10;
-    int pagesLimit = 10;
-    int linkedSitesLimit = 20;
     int port = 80;
     string directory = "";
-    string startUrl = "eychtipi.cs.uchicago.edu";
+    string startUrl = "http://eychtipi.cs.uchicago.edu/";
 } Config;
 
 struct CrawlerState {
     int threadsCount;
-    queue<pair<string, int> > pendingSites;
+    queue<pair<string, string>> pendingSites;
     map<string, bool> discoveredSites;
 };
 
@@ -39,7 +37,7 @@ void initialize();
 
 void schedule();
 
-void startCrawler(string baseUrl, int currentDepth, CrawlerState &crawlerState);
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState);
 
 int main(int argc, char *argv[]) {
     /*if (argc < 2) {
@@ -76,8 +74,8 @@ int main(int argc, char *argv[]) {
 
 void initialize() {
     crawlerState.threadsCount = 0;
-    crawlerState.pendingSites.push(make_pair(getHostnameFromURL(config.startUrl), 0));
-    crawlerState.discoveredSites[getHostnameFromURL(config.startUrl)] = true;
+    crawlerState.pendingSites.push(make_pair(getHostnameFromURL(config.startUrl), getHostPathFromURL(config.startUrl)));
+    crawlerState.discoveredSites[getHostnameFromURL(config.startUrl) + getHostPathFromURL(config.startUrl)] = true;
 }
 
 void schedule() {
@@ -85,51 +83,28 @@ void schedule() {
         m_mutex.lock();
         threadFinished = false;
         while (!crawlerState.pendingSites.empty() && crawlerState.threadsCount < config.maxThreads) {
-            auto nextSite = crawlerState.pendingSites.front();
+            pair<string, string> nextSite = crawlerState.pendingSites.front();
             crawlerState.pendingSites.pop();
             crawlerState.threadsCount++;
 
-            thread t = thread(startCrawler, nextSite.first, nextSite.second, ref(crawlerState));
+            thread t = thread(startCrawler, nextSite, ref(crawlerState));
             if (t.joinable()) t.detach();
         }
         m_mutex.unlock();
-
         unique_lock<mutex> m_lock(m_mutex);
         while (!threadFinished) m_condVar.wait(m_lock);
     }
 }
 
-void startCrawler(string hostname, int currentDepth, CrawlerState &crawlerState) {
-    ClientSocket clientSocket = ClientSocket(hostname, config.port, config.pagesLimit, config.crawlDelay);
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState) {
+    ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
     SiteStats stats = clientSocket.startDiscovering();
 
-    m_mutex.lock();
-    cout << "Website: " << stats.hostname << endl;
-    cout << "Depth: " << currentDepth << endl;
-    cout << "Pages Discovered: " << stats.discoveredPages.size() << endl;
-    cout << "Pages Failed to Discover: " << stats.numberOfPagesFailed << endl;
-    cout << "Number of Linked Sites: " << stats.linkedSites.size() << endl;
-    if (stats.minResponseTime < 0) cout << "Min Response Time: N.A." << endl;
-    else cout << "Min. Response Time: " << stats.minResponseTime << "ms" << endl;
-    if (stats.maxResponseTime < 0) cout << "Max. Response Time: N.A" << endl;
-    else cout << "Max. Response Time: " << stats.maxResponseTime << "ms" << endl;
-    if (stats.averageResponseTime < 0) cout << "Average Response Time: N.A" << endl;
-    else cout << "Average Response Time: " << stats.averageResponseTime << "ms" << endl;
-    if (!stats.discoveredPages.empty()) {
-        cout << "List of visited pages:" << endl;
-        cout << "    " << setw(15) << "Response Time" << "    " << "URL" << endl;
-        for (auto page : stats.discoveredPages) {
-            cout << "    " << setw(13) << page.second << "ms" << "    " << page.first << endl;
-        }
-    }
-
-    if (currentDepth < config.depthLimit) {
-        for (int i = 0; i < min(int(stats.linkedSites.size()), config.linkedSitesLimit); i++) {
-            string site = stats.linkedSites[i];
-            if (!crawlerState.discoveredSites[site]) {
-                crawlerState.pendingSites.push(make_pair(site, currentDepth + 1));
-                crawlerState.discoveredSites[site] = true;
-            }
+    for (int i = 0; i < stats.discoveredPages.size(); i++) {
+        pair<string,string> site = stats.discoveredPages[i];
+        if (!crawlerState.discoveredSites[site.first + site.second]) {
+            crawlerState.pendingSites.push(site);
+            crawlerState.discoveredSites[site.first + site.second] = true;
         }
     }
     crawlerState.threadsCount--;

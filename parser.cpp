@@ -58,6 +58,10 @@ vector<string> extractImages(string httpText) {
     return extractedUrls;
 }
 
+string extractCookie(string httpText) {
+
+}
+
 vector<pair<string, string> > extractUrls(string httpText) {
     string httpRaw = reformatHttpResponse(httpText);
 
@@ -77,6 +81,10 @@ vector<pair<string, string> > extractUrls(string httpText) {
 
             string url = httpRaw.substr(startPos, endPos - startPos);
 
+            string host = getHostnameFromURL(url);
+            if (host == "." || host == url) {
+
+            }
             if (verifyUrl(url)) {
                 string urlDomain = getHostnameFromURL(url);
                 extractedUrls.push_back(make_pair(urlDomain, getHostPathFromURL(url)));
