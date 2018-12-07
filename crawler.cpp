@@ -57,16 +57,17 @@ int main(int argc, char *argv[]) {
         if (strcmp(argv[i], "-f") == 0) {
             config.directory = argv[i + 1];
         }
-    }/*
-    if (config.startUrl == "") {
+    }
+    char endChar = config.directory.back();
+    /*
+    if (config.startUrl.empty()) {
         cerr << "No start url provided" << endl;
         return 0;
-    }
-
-    if (config.directory == "") {
-        cerr << "No download directory provided" << endl;
-        return 0;
     } */
+
+    if (!config.directory.empty() && endChar != '/') {
+        config.directory = config.directory + "/";
+    }
     initialize();
     schedule();
     return 0;
@@ -86,7 +87,6 @@ void schedule() {
             pair<string, string> nextSite = crawlerState.pendingSites.front();
             crawlerState.pendingSites.pop();
             crawlerState.threadsCount++;
-
             thread t = thread(startCrawler, nextSite, ref(crawlerState));
             if (t.joinable()) t.detach();
         }
@@ -98,7 +98,7 @@ void schedule() {
 
 void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState) {
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
-    SiteStats stats = clientSocket.startDiscovering();
+    SiteStats stats = clientSocket.startDiscovering(config.directory);
 
     for (int i = 0; i < stats.discoveredPages.size(); i++) {
         pair<string,string> site = stats.discoveredPages[i];

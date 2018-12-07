@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <chrono>
 #include <cstdlib>
+#include <fstream>
 
 using namespace std;
 using namespace std::chrono;
@@ -63,12 +64,11 @@ string ClientSocket::createHttpRequest(string host, string path) {
     return request;
 }
 
-SiteStats ClientSocket::startDiscovering() {
+SiteStats ClientSocket::startDiscovering(string directory) {
     SiteStats stats;
     stats.hostname = hostname.first;
 
     string path = hostname.second;
-
     if (!this->startConnection().empty()) {
         stats.numberOfPagesFailed++;
         return stats;
@@ -96,41 +96,26 @@ SiteStats ClientSocket::startDiscovering() {
         }
     }
 
-    cout << stats.hostname << endl;
-    //cout << httpResponse << endl;
+    vector<string> downloadLinks = extractDownloads(httpResponse);
 
-    /*
-    vector<string> images = extractImages(httpResponse);
-
-    for (auto url : images) {
-        string request = createHttpRequest(hostname, url);
-        send(sock, send_data.c_str(), strlen(send_data.c_str()), 0);
-
-        int totalBytesRead = 0;
-        string httpResponse = "";
-
-        while (true) {
-            bzero(recv_data, sizeof(recv_data));
-            int bytesRead = recv(sock, recv_data, sizeof(recv_data), 0);
-
-            if (bytesRead > 0) {
-                string ss(recv_data);
-                httpResponse += ss;
-                totalBytesRead += bytesRead;
-            } else {
-                break;
-            }
+    vector<pair<string, string>> downloadUrls;
+    for (auto url : downloadLinks) {
+        string host = getHostnameFromURL(url);
+        if (host == ".") {
+            downloadUrls.push_back(make_pair(stats.hostname , url.substr(1)));
+        } else if (host == url) {
+            downloadUrls.push_back(make_pair(stats.hostname , "/" + url));
+        } else {
+            downloadUrls.push_back(make_pair(getHostnameFromURL(url), getHostPathFromURL(url)));
         }
-    }*/
-
-    this->closeConnection();
+    }
 
     vector<pair<string, string>> extractedUrls = extractUrls(httpResponse);
     for (auto url : extractedUrls) {
         if (url.first.empty() || url.first == stats.hostname) {
             if (!discoveredPages[stats.hostname + url.second]) {
                 discoveredPages[stats.hostname + url.second] = true;
-                stats.discoveredPages.push_back(make_pair(stats.hostname, url.second));
+                stats.discoveredPages.emplace_back(stats.hostname, url.second);
             }
         } else {
             if (!discoveredLinkedSites[url.first + url.second]) {
@@ -140,28 +125,27 @@ SiteStats ClientSocket::startDiscovering() {
         }
     }
 
-    return stats;
-}
+    for (auto link : downloadUrls) {
+        string send_data = createHttpRequest(link.first, link.second);
+        send(sock, send_data.c_str(), strlen(send_data.c_str()), 0);
+        ofstream file(directory + link.first + link.second);
+        char recv_data[1024];
+        int totalBytesRead = 0;
+        while (true) {
+            bzero(recv_data, sizeof(recv_data));
+            int bytesRead = recv(sock, recv_data, sizeof(recv_data), 0);
 
-string ClientSocket::generateUUID() {
-    string uuid = string(36, ' ');
-    int rnd = 0;
-
-    uuid[8] = '-';
-    uuid[13] = '-';
-    uuid[18] = '-';
-    uuid[23] = '-';
-
-    uuid[14] = '4';
-
-    for (int i = 0; i < 36; i++) {
-        if (i != 8 && i != 13 && i != 18 && i != 14 && i != 23) {
-            if (rnd <= 0x02) {
-                rnd = 0x2000000 + (rand() * 0x1000000) | 0;
+            if (bytesRead > 0) {
+                file << recv_data;
+                totalBytesRead += bytesRead;
+            } else {
+                break;
             }
-            rnd >>= 4;
-            uuid[i] = CHARS[(i == 19) ? ((rnd & 0xf) & 0x3) | 0x8 : rnd & 0xf];
         }
     }
-    return uuid;
+
+
+    this->closeConnection();
+
+    return stats;
 }

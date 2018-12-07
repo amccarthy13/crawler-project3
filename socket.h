@@ -28,12 +28,10 @@ class ClientSocket {
 
     string createHttpRequest(string host, string path);
 
-    string generateUUID();
-
 public:
     explicit ClientSocket(pair<string, string> hostname, int port = 80);
 
-    SiteStats startDiscovering();
+    SiteStats startDiscovering(string directory);
 };
 
 #endif

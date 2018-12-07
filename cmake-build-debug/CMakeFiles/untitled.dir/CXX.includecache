@@ -6,16 +6,30 @@
 
 #IncludeRegexTransform: 
 
-/Users/andrewmccarthy/Documents/GitHub/crawler-project3/parser.cpp
+/Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler.cpp
+utility
+-
+socket.h
+/Users/andrewmccarthy/Documents/GitHub/crawler-project3/socket.h
 parser.h
 /Users/andrewmccarthy/Documents/GitHub/crawler-project3/parser.h
 iostream
 -
-string
+fstream
+-
+queue
 -
 vector
 -
+thread
+-
+mutex
+-
 map
+-
+iomanip
+-
+condition_variable
 -
 
 /Users/andrewmccarthy/Documents/GitHub/crawler-project3/parser.h
@@ -40,6 +54,8 @@ unistd.h
 chrono
 -
 cstdlib
+-
+fstream
 -
 
 /Users/andrewmccarthy/Documents/GitHub/crawler-project3/socket.h

@@ -10,9 +10,8 @@ using namespace std;
 string getHostnameFromURL(string url);
 string getHostPathFromURL(string url);
 
-vector<string> extractImages(string httpText);
-
 vector< pair<string, string> > extractUrls(string httpText);
+vector<string> extractDownloads(string httpText);
 bool verifyUrl(string url);
 bool verifyDomain(string url);
 bool verifyType(string url);

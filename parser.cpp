@@ -30,37 +30,58 @@ string getHostPathFromURL(string url) {
     return path;
 }
 
-vector<string> extractImages(string httpText) {
+vector<string> extractDownloads(string httpText) {
     string httpRaw = reformatHttpResponse(httpText);
-    const string imgStart = "img src=\"";
+
+    const string urlStart[] = {"href=\"", "href = \""};
 
     const string urlEndChars = "\"#?, ";
 
     vector<string> extractedUrls;
 
+    for (auto startText : urlStart) {
+        while (true) {
+            int startPos = httpRaw.find(startText);
+            if (startPos == string::npos) break;
+            startPos += startText.length();
 
-    while (true) {
+            int endPos = httpRaw.find_first_of(urlEndChars, startPos);
 
-        int startPos = httpRaw.find(imgStart);
+            string url = httpRaw.substr(startPos, endPos - startPos);
 
-        if (startPos == string::npos) break;
+            if (!verifyType(url)) {
+                extractedUrls.push_back(url);
+            }
 
-        startPos += imgStart.length();
-
-        int endPos = httpRaw.find_first_of(urlEndChars, startPos);
-
-        string url = httpRaw.substr(startPos, endPos - startPos);
-
-        extractedUrls.push_back(url);
-
-        httpRaw.erase(0, endPos);
+            httpRaw.erase(0, endPos);
+        }
     }
+
+    string httpRawImage = reformatHttpResponse(httpText);
+
+    const string imgStart[] = {"src=\"", "src = \""};
+
+    for (auto startText : imgStart) {
+        while (true) {
+            int startPos = httpRawImage.find(startText);
+            if (startPos == string::npos) break;
+            startPos += startText.length();
+
+            int endPos = httpRawImage.find_first_of(urlEndChars, startPos);
+
+            string url = httpRawImage.substr(startPos, endPos - startPos);
+
+            if (!verifyType(url)) {
+                extractedUrls.push_back(url);
+            }
+
+            httpRawImage.erase(0, endPos);
+        }
+    }
+
     return extractedUrls;
 }
 
-string extractCookie(string httpText) {
-
-}
 
 vector<pair<string, string> > extractUrls(string httpText) {
     string httpRaw = reformatHttpResponse(httpText);
@@ -82,10 +103,17 @@ vector<pair<string, string> > extractUrls(string httpText) {
             string url = httpRaw.substr(startPos, endPos - startPos);
 
             string host = getHostnameFromURL(url);
-            if (host == "." || host == url) {
-
+            if (host == ".") {
+                if (verifyType(url)) {
+                    extractedUrls.push_back(make_pair("", url.substr(1)));
+                }
             }
-            if (verifyUrl(url)) {
+            else if (host == url) {
+                if (verifyType(url)) {
+                    extractedUrls.push_back(make_pair("", "/" + url));
+                }
+            }
+            else if (verifyUrl(url)) {
                 string urlDomain = getHostnameFromURL(url);
                 extractedUrls.push_back(make_pair(urlDomain, getHostPathFromURL(url)));
             }
