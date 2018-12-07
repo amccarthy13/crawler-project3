@@ -58,10 +58,50 @@ string ClientSocket::closeConnection() {
 
 string ClientSocket::createHttpRequest(string host, string path) {
     string request;
-    request += "GET " + path + " HTTP/1.1\r\n";
+    request += "GET " + path + " HTTP/1.0\r\n";
     request += "HOST:" + host + "\r\n";
     request += "Connection: close\r\n\r\n";
     return request;
+}
+
+char *removeHTTPHeader(char *buffer, int &bodySize) {
+    char *t = strstr(buffer, "\r\n\r\n");
+    t = t + 4;
+
+    for (auto it = buffer; it != t; ++it) {
+        ++bodySize;
+    }
+
+    return t;
+}
+
+void getPicture(const int &socketfd, const int &bSize, string pictureName) {
+    cout << pictureName << endl;
+    std::ofstream file(pictureName, std::ofstream::binary | std::ofstream::out);
+    char buffer[bSize];
+    ssize_t bReceived;
+
+    bReceived = recv(socketfd, buffer, bSize, 0);
+    int bodySize = 0;
+
+    char *t = removeHTTPHeader(buffer, bodySize);
+    bodySize = bReceived - bodySize;
+
+    file.write(t, bodySize);
+    memset(buffer, 0, bSize);
+
+    while ((bReceived = recv(socketfd, buffer, bSize, 0)) > 0) {
+        file.write(buffer, bReceived);
+        memset(buffer, 0, bSize);
+    }
+
+    file.close();
+}
+
+string getFileName(string path) {
+    int pos = path.find_last_of("/");
+    string output = path.substr(pos + 1, path.length() - pos);
+    return output;
 }
 
 SiteStats ClientSocket::startDiscovering(string directory) {
@@ -99,16 +139,24 @@ SiteStats ClientSocket::startDiscovering(string directory) {
     vector<string> downloadLinks = extractDownloads(httpResponse);
 
     vector<pair<string, string>> downloadUrls;
+    map<string, bool> discoveredDownloads;
+
     for (auto url : downloadLinks) {
         string host = getHostnameFromURL(url);
         if (host == ".") {
-            downloadUrls.push_back(make_pair(stats.hostname , url.substr(1)));
-        } else if (host == url) {
-            downloadUrls.push_back(make_pair(stats.hostname , "/" + url));
-        } else {
-            downloadUrls.push_back(make_pair(getHostnameFromURL(url), getHostPathFromURL(url)));
+            if (!discoveredDownloads[url]) {
+                downloadUrls.push_back(make_pair(stats.hostname, url.substr(1)));
+                discoveredDownloads[url] = true;
+            }
+        } else if (!verifyDomain(host)) {
+            if (!discoveredDownloads[url]) {
+                downloadUrls.push_back(make_pair(stats.hostname, "/" + url));
+                discoveredDownloads[url] = true;
+            }
         }
     }
+
+    this->closeConnection();
 
     vector<pair<string, string>> extractedUrls = extractUrls(httpResponse);
     for (auto url : extractedUrls) {
@@ -126,26 +174,15 @@ SiteStats ClientSocket::startDiscovering(string directory) {
     }
 
     for (auto link : downloadUrls) {
+        string fileName =
+        this->startConnection();
         string send_data = createHttpRequest(link.first, link.second);
         send(sock, send_data.c_str(), strlen(send_data.c_str()), 0);
-        ofstream file(directory + link.first + link.second);
-        char recv_data[1024];
-        int totalBytesRead = 0;
-        while (true) {
-            bzero(recv_data, sizeof(recv_data));
-            int bytesRead = recv(sock, recv_data, sizeof(recv_data), 0);
 
-            if (bytesRead > 0) {
-                file << recv_data;
-                totalBytesRead += bytesRead;
-            } else {
-                break;
-            }
-        }
+        getPicture(sock, 1024, getFileName(link.second));
+
+        this->closeConnection();
     }
-
-
-    this->closeConnection();
 
     return stats;
 }

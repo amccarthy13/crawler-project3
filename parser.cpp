@@ -144,7 +144,7 @@ bool verifyType(string url) {
 }
 
 bool verifyDomain(string url) {
-    string allowedDomains[] = {".com", ".sg", ".net", ".co", ".org", ".me", ".edu"};
+    string allowedDomains[] = {".com", ".sg", ".net", ".co", ".org", ".me", ".edu", ".gov"};
     bool flag = true;
     for (auto type : allowedDomains)
         if (hasSuffix(url, type)) {
