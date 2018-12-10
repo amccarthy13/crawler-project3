@@ -225,9 +225,9 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
     for (auto link : downloadUrls) {
         this->startConnection();
         string send_data = createHttpRequestWithCookie(link.first, link.second, cookie);
-        send(sock, send_data.c_str(), strlen(send_data.c_str()), 0);
-
-        getPicture(sock, 1024, directory + getFileName(link.second));
+        if (!(send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0)) {
+            getPicture(sock, 1024, directory + getFileName(link.second));
+        }
 
         this->closeConnection();
     }
