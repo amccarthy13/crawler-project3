@@ -14,7 +14,6 @@ typedef struct {
     int numberOfPagesFailed = 0;
     vector<pair <string, string> > linkedSites;
     vector<pair <string, string> > discoveredPages;
-    vector<string> cookies;
 } SiteStats;
 
 class ClientSocket {
