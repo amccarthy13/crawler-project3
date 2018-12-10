@@ -33,7 +33,7 @@ class ClientSocket {
 public:
     explicit ClientSocket(pair<string, string> hostname, int port = 80);
 
-    SiteStats startDiscovering(string directory, string cookie);
+    SiteStats startDiscovering(string directory, string cookie, int count);
 
     string getCookie();
 };

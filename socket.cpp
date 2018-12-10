@@ -146,7 +146,7 @@ string getFileName(string path) {
     return output;
 }
 
-SiteStats ClientSocket::startDiscovering(string directory, string cookie) {
+SiteStats ClientSocket::startDiscovering(string directory, string cookie, int count) {
     SiteStats stats;
     stats.hostname = hostname.first;
 
@@ -166,10 +166,10 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie) {
     int totalBytesRead = 0;
     string httpResponse = "";
     string fileName = getFileName(path);
-    if (fileName.empty() || fileName == "/") {
-        fileName = "index.html";
+    if (fileName.empty() || fileName == "/" || fileName == "index.html") {
+        fileName = "index-" + to_string(count) + ".html";
     }
-    std::ofstream file(fileName, std::ofstream::binary | std::ofstream::out);
+    std::ofstream file(directory + fileName, std::ofstream::binary | std::ofstream::out);
     while (true) {
         bzero(recv_data, sizeof(recv_data));
         int bytesRead = recv(sock, recv_data, sizeof(recv_data), 0);

@@ -15,10 +15,10 @@
 using namespace std;
 
 typedef struct {
-    int maxThreads = 10;
+    int maxThreads = 1;
     int port = 80;
     string directory = "";
-    string startUrl = "http://eychtipi.cs.uchicago.edu/";
+    string startUrl = "";
 } Config;
 
 struct CrawlerState {
@@ -34,17 +34,19 @@ mutex m_mutex;
 condition_variable m_condVar;
 bool threadFinished;
 
+int pageCount = 0;
+
 void initialize();
 
 void schedule();
 
-void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie);
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie, int count);
 
 int main(int argc, char *argv[]) {
-    /*if (argc < 2) {
+    if (argc < 2) {
         cout << "Invalid Parameters" << endl;
         return 0;
-    } */
+    }
     for (int i = 1; i < argc - 1; i++) {
         if (strcmp(argv[i], "-n") == 0) {
             config.maxThreads = atoi(argv[i + 1]);
@@ -60,17 +62,17 @@ int main(int argc, char *argv[]) {
         }
     }
     char endChar = config.directory.back();
-    /*
     if (config.startUrl.empty()) {
         cerr << "No start url provided" << endl;
         return 0;
-    } */
+    }
 
     if (!config.directory.empty() && endChar != '/') {
         config.directory = config.directory + "/";
     }
     initialize();
     schedule();
+    cout << "Crawler Finished" << endl;
     return 0;
 }
 
@@ -102,7 +104,9 @@ void schedule() {
             pair<string, string> nextSite = crawlerState.pendingSites.front();
             crawlerState.pendingSites.pop();
             crawlerState.threadsCount++;
-            thread t = thread(startCrawler, nextSite, ref(crawlerState), cookie);
+
+            pageCount++;
+            thread t = thread(startCrawler, nextSite, ref(crawlerState), cookie, pageCount);
             if (t.joinable()) t.detach();
         }
         m_mutex.unlock();
@@ -111,9 +115,9 @@ void schedule() {
     }
 }
 
-void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie) {
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie, int count) {
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
-    SiteStats stats = clientSocket.startDiscovering(config.directory, cookie);
+    SiteStats stats = clientSocket.startDiscovering(config.directory, cookie, count);
 
     for (int i = 0; i < stats.discoveredPages.size(); i++) {
         pair<string, string> site = stats.discoveredPages[i];
