@@ -82,6 +82,24 @@ vector<string> extractDownloads(string httpText) {
     return extractedUrls;
 }
 
+string extractCookie(string httpText) {
+    string httpRaw = reformatHttpResponse(httpText);
+
+    const string urlStart = "Set-Cookie: ";
+
+    const string endChar = ";";
+
+    int startPos = httpRaw.find(urlStart);
+    if (startPos == string::npos) return "";
+    startPos += urlStart.length();
+
+    int endPos = httpRaw.find_first_of(endChar, startPos);
+
+    string cookie = httpRaw.substr(startPos, endPos - startPos);
+
+    return cookie;
+}
+
 
 vector<pair<string, string> > extractUrls(string httpText) {
     string httpRaw = reformatHttpResponse(httpText);
@@ -107,13 +125,11 @@ vector<pair<string, string> > extractUrls(string httpText) {
                 if (verifyType(url)) {
                     extractedUrls.push_back(make_pair("", url.substr(1)));
                 }
-            }
-            else if (host == url) {
+            } else if (host == url) {
                 if (verifyType(url)) {
                     extractedUrls.push_back(make_pair("", "/" + url));
                 }
-            }
-            else if (verifyUrl(url)) {
+            } else if (verifyUrl(url)) {
                 string urlDomain = getHostnameFromURL(url);
                 extractedUrls.push_back(make_pair(urlDomain, getHostPathFromURL(url)));
             }

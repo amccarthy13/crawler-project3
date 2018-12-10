@@ -23,6 +23,7 @@ typedef struct {
 
 struct CrawlerState {
     int threadsCount;
+    queue<string> pendingCookies;
     queue<pair<string, string>> pendingSites;
     map<string, bool> discoveredSites;
 };

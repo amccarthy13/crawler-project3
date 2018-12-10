@@ -14,6 +14,7 @@ typedef struct {
     int numberOfPagesFailed = 0;
     vector<pair <string, string> > linkedSites;
     vector<pair <string, string> > discoveredPages;
+    vector<string> cookies;
 } SiteStats;
 
 class ClientSocket {
@@ -27,6 +28,8 @@ class ClientSocket {
     string closeConnection();
 
     string createHttpRequest(string host, string path);
+
+    string createHttpRequestWithCookie(string host, string path, string cookie);
 
 public:
     explicit ClientSocket(pair<string, string> hostname, int port = 80);

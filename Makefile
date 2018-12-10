@@ -14,4 +14,4 @@ parser.o: parser.cpp
 	$(CC) $(CFLAGS) -c parser.cpp
 
 clean:
-	rm -f crawler *.o *.jpg *.pdf *.css *.png *.pdf *.js
+	rm -f crawler *.o *.jpg *.pdf *.css *.png *.pdf *.js *.ico *.html

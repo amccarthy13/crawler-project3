@@ -64,6 +64,15 @@ string ClientSocket::createHttpRequest(string host, string path) {
     return request;
 }
 
+string ClientSocket::createHttpRequestWithCookie(string host, string path, string cookie) {
+    string request;
+    request += "GET " + path + " HTTP/1.0\r\n";
+    request += "HOST:" + host + "\r\n";
+    request += "Cookie:" + cookie + "\r\n";
+    request += "Connection: close\r\n\r\n";
+    return request;
+}
+
 char *removeHTTPHeader(char *buffer, int &bodySize) {
     char *t = strstr(buffer, "\r\n\r\n");
     t = t + 4;
@@ -75,14 +84,15 @@ char *removeHTTPHeader(char *buffer, int &bodySize) {
     return t;
 }
 
-void getPicture(const int &socketfd, const int &bSize, string pictureName) {
-    cout << pictureName << endl;
+string getPicture(const int &socketfd, const int &bSize, string pictureName) {
     std::ofstream file(pictureName, std::ofstream::binary | std::ofstream::out);
     char buffer[bSize];
     ssize_t bReceived;
 
     bReceived = recv(socketfd, buffer, bSize, 0);
     int bodySize = 0;
+
+    string cookie = extractCookie(buffer);
 
     char *t = removeHTTPHeader(buffer, bodySize);
     bodySize = bReceived - bodySize;
@@ -96,6 +106,7 @@ void getPicture(const int &socketfd, const int &bSize, string pictureName) {
     }
 
     file.close();
+    return cookie;
 }
 
 string getFileName(string path) {
@@ -123,11 +134,17 @@ SiteStats ClientSocket::startDiscovering(string directory) {
     char recv_data[1024];
     int totalBytesRead = 0;
     string httpResponse = "";
+    string fileName = getFileName(path);
+    if (fileName.empty() || fileName == "/") {
+        fileName = "index.html";
+    }
+    std::ofstream file(fileName, std::ofstream::binary | std::ofstream::out);
     while (true) {
         bzero(recv_data, sizeof(recv_data));
         int bytesRead = recv(sock, recv_data, sizeof(recv_data), 0);
 
         if (bytesRead > 0) {
+            file.write(recv_data, bytesRead);
             string ss(recv_data);
             httpResponse += ss;
             totalBytesRead += bytesRead;
@@ -135,6 +152,9 @@ SiteStats ClientSocket::startDiscovering(string directory) {
             break;
         }
     }
+
+    file.close();
+
 
     vector<string> downloadLinks = extractDownloads(httpResponse);
 
@@ -157,6 +177,12 @@ SiteStats ClientSocket::startDiscovering(string directory) {
     }
 
     this->closeConnection();
+
+    string cookie = extractCookie(httpResponse);
+    if (!cookie.empty()) {
+
+    }
+
 
     vector<pair<string, string>> extractedUrls = extractUrls(httpResponse);
     for (auto url : extractedUrls) {

@@ -17,5 +17,6 @@ bool verifyDomain(string url);
 bool verifyType(string url);
 bool hasSuffix(string str, string suffix);
 string reformatHttpResponse(string text);
+string extractCookie(string httpText);
 
 #endif
