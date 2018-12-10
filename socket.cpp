@@ -58,7 +58,7 @@ string ClientSocket::closeConnection() {
 string ClientSocket::createHttpRequest(string host, string path) {
     string request;
     request += "GET " + path + " HTTP/1.0\r\n";
-    request += "HOST:" + host + "\r\n";
+    request += "Host: " + host + "\r\n";
     request += "Connection: close\r\n\r\n";
     return request;
 }
@@ -66,8 +66,8 @@ string ClientSocket::createHttpRequest(string host, string path) {
 string ClientSocket::createHttpRequestWithCookie(string host, string path, string cookie) {
     string request;
     request += "GET " + path + " HTTP/1.0\r\n";
-    request += "HOST:" + host + "\r\n";
-    request += "Cookie:" + cookie + "\r\n";
+    request += "Host: " + host + "\r\n";
+    request += "Cookie: " + cookie + ";" + "\r\n";
     request += "Connection: close\r\n\r\n";
     return request;
 }
@@ -115,15 +115,13 @@ char *removeHTTPHeader(char *buffer, int &bodySize) {
     return t;
 }
 
-string getPicture(const int &socketfd, const int &bSize, string pictureName) {
+void getPicture(const int &socketfd, const int &bSize, string pictureName) {
     std::ofstream file(pictureName, std::ofstream::binary | std::ofstream::out);
     char buffer[bSize];
     ssize_t bReceived;
 
     bReceived = recv(socketfd, buffer, bSize, 0);
     int bodySize = 0;
-
-    string cookie = extractCookie(buffer);
 
     char *t = removeHTTPHeader(buffer, bodySize);
     bodySize = bReceived - bodySize;
@@ -137,7 +135,6 @@ string getPicture(const int &socketfd, const int &bSize, string pictureName) {
     }
 
     file.close();
-    return cookie;
 }
 
 string getFileName(string path) {
@@ -226,8 +223,9 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
 
     for (auto link : downloadUrls) {
         this->startConnection();
-        string send_data = createHttpRequestWithCookie(link.first, link.second, cookie);
-        if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) >= 0) {
+        string download_send_data = createHttpRequestWithCookie(link.first, link.second, cookie);
+        cout << download_send_data << endl;
+        if (send(sock, download_send_data.c_str(), strlen(download_send_data.c_str()), 0) >= 0) {
             getPicture(sock, 1024, directory + getFileName(link.second));
         }
 

@@ -87,7 +87,7 @@ string extractCookie(string httpText) {
 
     const string urlStart = "set-cookie: ";
 
-    const string endChar = "; ";
+    const string endChar = " ";
 
     int startPos = httpRaw.find(urlStart);
     if (startPos == string::npos) return "";
