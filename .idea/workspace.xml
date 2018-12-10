@@ -13,6 +13,11 @@
   <component name="ChangeListManager">
     <list default="true" id="55904d22-7873-4147-8d27-a6413c79c69f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/CXX.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/crawler.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/crawler.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/parser.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/parser.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/socket.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/untitled.dir/socket.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/untitled" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/untitled" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crawler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/crawler.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/socket.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/socket.cpp" afterDir="false" />
     </list>
@@ -36,15 +41,15 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="Makefile" value="2" />
+          <entry key="Makefile" value="3" />
           <entry key="cpp" value="13" />
           <entry key="css" value="3" />
           <entry key="h" value="10" />
           <entry key="html" value="9" />
           <entry key="ico" value="3" />
           <entry key="iosfwd" value="1" />
-          <entry key="jpg" value="27" />
-          <entry key="png" value="10" />
+          <entry key="jpg" value="29" />
+          <entry key="png" value="11" />
           <entry key="string" value="1" />
           <entry key="thread" value="1" />
           <entry key="vector" value="1" />
@@ -54,21 +59,21 @@
         <counts>
           <entry key="CSS" value="3" />
           <entry key="HTML" value="9" />
-          <entry key="Image" value="40" />
+          <entry key="Image" value="43" />
           <entry key="ObjectiveC" value="27" />
-          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="PLAIN_TEXT" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Makefile" value="90" />
-          <entry key="cpp" value="10713" />
+          <entry key="cpp" value="11888" />
           <entry key="h" value="246" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="ObjectiveC" value="10959" />
+          <entry key="ObjectiveC" value="12134" />
           <entry key="PLAIN_TEXT" value="90" />
         </counts>
       </usages-collector>
@@ -76,11 +81,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/crawler.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="496">
-              <caret line="71" column="121" selection-start-line="71" selection-start-column="121" selection-end-line="71" selection-end-column="121" />
+            <state relative-caret-position="559">
+              <caret line="105" column="24" selection-start-line="105" selection-start-column="24" selection-end-line="105" selection-end-column="24" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -109,11 +114,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/socket.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="471">
-              <caret line="163" selection-start-line="163" selection-end-line="163" />
+            <state relative-caret-position="190">
+              <caret line="170" column="5" selection-start-line="170" selection-start-column="5" selection-end-line="170" selection-end-column="5" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -169,8 +174,8 @@
         <option value="$PROJECT_DIR$/Makefile" />
         <option value="$PROJECT_DIR$/parser.cpp" />
         <option value="$PROJECT_DIR$/socket.h" />
-        <option value="$PROJECT_DIR$/socket.cpp" />
         <option value="$PROJECT_DIR$/crawler.cpp" />
+        <option value="$PROJECT_DIR$/socket.cpp" />
       </list>
     </option>
   </component>
@@ -255,12 +260,12 @@
       <option name="presentableId" value="Default" />
       <updated>1543287497682</updated>
       <workItem from="1543287499069" duration="19263000" />
-      <workItem from="1543865307118" duration="37667000" />
+      <workItem from="1543865307118" duration="40805000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="56930000" />
+    <option name="totallyTimeSpent" value="60068000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="-150" width="1920" height="1200" extended-state="0" />
@@ -295,20 +300,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/uuid/uuid.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="61" column="25" selection-start-line="61" selection-start-column="5" selection-end-line="61" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="341" column="4" selection-start-line="341" selection-start-column="4" selection-end-line="341" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/iosfwd">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
@@ -371,13 +362,6 @@
     <entry file="file://$PROJECT_DIR$/google.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="33" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/string">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="261">
@@ -437,9 +421,6 @@
     <entry file="file://$PROJECT_DIR$/60ghz.css">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/adam.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/bimal-2.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -471,6 +452,13 @@
     <entry file="file://$PROJECT_DIR$/pubs.html">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="33" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/parser.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="422">
@@ -481,20 +469,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/socket.cpp">
+    <entry file="file://$PROJECT_DIR$/bolun-2.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/adam.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/downloads/rockefeller_interior.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crawler.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="471">
-          <caret line="163" selection-start-line="163" selection-end-line="163" />
+        <state relative-caret-position="559">
+          <caret line="105" column="24" selection-start-line="105" selection-start-column="24" selection-end-line="105" selection-end-column="24" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crawler.cpp">
+    <entry file="file://$PROJECT_DIR$/socket.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="71" column="121" selection-start-line="71" selection-start-column="121" selection-end-line="71" selection-end-column="121" />
+        <state relative-caret-position="190">
+          <caret line="170" column="5" selection-start-line="170" selection-start-column="5" selection-end-line="170" selection-end-column="5" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

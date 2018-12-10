@@ -4,6 +4,7 @@
 #include "parser.h"
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
 #include <queue>
 #include <vector>
 #include <thread>
@@ -11,6 +12,8 @@
 #include <map>
 #include <iomanip>
 #include <condition_variable>
+#include <stdio.h>
+#include <cstdlib>
 
 using namespace std;
 
@@ -42,39 +45,52 @@ void schedule();
 
 void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie, int count);
 
+char str[256];
+
 int main(int argc, char *argv[]) {
+    bool threadFlag = true;
+    bool startUrlFlag = true;
+    bool portFlag = true;
+    bool directoryFlag = true;
     if (argc < 2) {
-        cout << "Not enough flags provided" << endl;
+        cout << "No flags required" << endl;
         return 0;
     }
     for (int i = 1; i < argc - 1; i++) {
         if (strcmp(argv[i], "-n") == 0) {
+            threadFlag = false;
             config.maxThreads = atoi(argv[i + 1]);
         }
         if (strcmp(argv[i], "-h") == 0) {
+            startUrlFlag = false;
             config.startUrl = argv[i + 1];
         }
         if (strcmp(argv[i], "-p") == 0) {
+            portFlag = false;
             config.port = atoi(argv[i + 1]);
         }
         if (strcmp(argv[i], "-f") == 0) {
+            directoryFlag = false;
+            strcat(str, argv[i + 1]);
             config.directory = argv[i + 1];
         }
     }
-    char endChar = config.directory.back();
-    if (config.startUrl.empty()) {
-        cerr << "No start url provided" << endl;
-        return 0;
-    }
 
-    if (config.directory.empty()) {
-        cout
-                << "Note: no save directory for downloaded files provided.\nFiles are being saved to working directory.\n\"make clean\" will erase all downloaded file types as well as .o and .exe files"
-                << endl;
+    if (threadFlag) {
+        cerr << "No max thread parameter provided" << endl;
+        return 3;
     }
-
-    if (!config.directory.empty() && endChar != '/') {
-        config.directory = config.directory + "/";
+    if (startUrlFlag) {
+        cerr << "No start url parameter provided" << endl;
+        return 3;
+    }
+    if (portFlag) {
+        cerr << "No port parameter provided" << endl;
+        return 3;
+    }
+    if (directoryFlag) {
+        cerr << "No download directory parameter provided" << endl;
+        return 3;
     }
 
     initialize();
@@ -84,6 +100,19 @@ int main(int argc, char *argv[]) {
 }
 
 void initialize() {
+    char command[256] = "mkdir -p ";
+    strcat(command, str);
+    int sys_err = std::system(command);
+    if (sys_err == -1) {
+        cerr << "Error creating download directory" << endl;
+        exit(2);
+    }
+
+    char endChar = config.directory.back();
+    if (!config.directory.empty() && endChar != '/') {
+        config.directory = config.directory + "/";
+    }
+
     crawlerState.threadsCount = 0;
     ClientSocket clientSocket = ClientSocket(
             make_pair(getHost(config.startUrl), getPath(config.startUrl)), config.port);
@@ -91,7 +120,7 @@ void initialize() {
         string cookie = clientSocket.getCookie();
         if (cookie.empty()) {
             cerr << "Unable to connect to start Url" << endl;
-            exit(0);
+            exit(1);
         }
         crawlerState.pendingCookies.push(cookie);
     }

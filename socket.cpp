@@ -152,13 +152,13 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
 
     string path = hostname.second;
     if (!this->startConnection().empty()) {
-        cerr << "Connection for " + hostname.first + hostname.second + " failed";
+        cerr << "Connection for " + hostname.first + hostname.second + " failed\n" << endl;
         return stats;
     }
 
     string send_data = createHttpRequestWithCookie(stats.hostname, path, cookie);
     if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0) {
-        cerr << "Connection for " + hostname.first + hostname.second + " failed";
+        cerr << "Connection for " + hostname.first + hostname.second + " failed\n" << endl;
         return stats;
     }
 

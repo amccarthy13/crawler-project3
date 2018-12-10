@@ -17,6 +17,8 @@ iostream
 -
 fstream
 -
+stdlib.h
+-
 queue
 -
 vector
@@ -30,6 +32,10 @@ map
 iomanip
 -
 condition_variable
+-
+stdio.h
+-
+cstdlib
 -
 
 /Users/andrewmccarthy/Documents/GitHub/crawler-project3/parser.h
