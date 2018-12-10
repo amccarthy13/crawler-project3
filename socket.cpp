@@ -193,12 +193,12 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
         string host = getHost(url);
         if (host == ".") {
             if (!discoveredDownloads[url]) {
-                downloadUrls.push_back(make_pair(stats.hostname, url.substr(1)));
+                downloadUrls.emplace_back(stats.hostname, url.substr(1));
                 discoveredDownloads[url] = true;
             }
         } else if (!verifyDomain(host)) {
             if (!discoveredDownloads[url]) {
-                downloadUrls.push_back(make_pair(stats.hostname, "/" + url));
+                downloadUrls.emplace_back(stats.hostname, "/" + url);
                 discoveredDownloads[url] = true;
             }
         }
