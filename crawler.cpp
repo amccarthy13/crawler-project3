@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 void initialize() {
     crawlerState.threadsCount = 0;
     ClientSocket clientSocket = ClientSocket(
-            make_pair(getHostnameFromURL(config.startUrl), getHostPathFromURL(config.startUrl)), config.port);
+            make_pair(getHost(config.startUrl), getPath(config.startUrl)), config.port);
     for (int i = 1; i <= config.maxThreads; i++) {
         string cookie = clientSocket.getCookie();
         if (cookie.empty()) {
@@ -88,8 +88,8 @@ void initialize() {
         }
         crawlerState.pendingCookies.push(cookie);
     }
-    crawlerState.pendingSites.push(make_pair(getHostnameFromURL(config.startUrl), getHostPathFromURL(config.startUrl)));
-    crawlerState.discoveredSites[getHostnameFromURL(config.startUrl) + getHostPathFromURL(config.startUrl)] = true;
+    crawlerState.pendingSites.push(make_pair(getHost(config.startUrl), getPath(config.startUrl)));
+    crawlerState.discoveredSites[getHost(config.startUrl) + getPath(config.startUrl)] = true;
 }
 
 void schedule() {

@@ -11,7 +11,6 @@ using namespace std;
 
 typedef struct {
     string hostname;
-    int numberOfPagesFailed = 0;
     vector<pair <string, string> > linkedSites;
     vector<pair <string, string> > discoveredPages;
 } SiteStats;

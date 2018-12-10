@@ -7,8 +7,8 @@
 
 using namespace std;
 
-string getHostnameFromURL(string url);
-string getHostPathFromURL(string url);
+string getHost(string url);
+string getPath(string url);
 
 vector< pair<string, string> > extractUrls(string httpText);
 vector<string> extractDownloads(string httpText);
@@ -16,7 +16,7 @@ bool verifyUrl(string url);
 bool verifyDomain(string url);
 bool verifyType(string url);
 bool hasSuffix(string str, string suffix);
-string reformatHttpResponse(string text);
+string reformatHttp(string text);
 string extractCookie(string httpText);
 
 #endif

@@ -152,13 +152,11 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
 
     string path = hostname.second;
     if (!this->startConnection().empty()) {
-        stats.numberOfPagesFailed++;
         return stats;
     }
 
     string send_data = createHttpRequestWithCookie(stats.hostname, path, cookie);
     if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0) {
-        stats.numberOfPagesFailed++;
         return stats;
     }
 
@@ -192,7 +190,7 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
     map<string, bool> discoveredDownloads;
 
     for (auto url : downloadLinks) {
-        string host = getHostnameFromURL(url);
+        string host = getHost(url);
         if (host == ".") {
             if (!discoveredDownloads[url]) {
                 downloadUrls.push_back(make_pair(stats.hostname, url.substr(1)));

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-string getHostnameFromURL(string url) {
+string getHost(string url) {
     int offset = 0;
     offset = offset == 0 && url.compare(0, 8, "https://") == 0 ? 8 : offset;
     offset = offset == 0 && url.compare(0, 7, "http://") == 0 ? 7 : offset;
@@ -16,7 +16,7 @@ string getHostnameFromURL(string url) {
     return domain;
 }
 
-string getHostPathFromURL(string url) {
+string getPath(string url) {
     int offset = 0;
     offset = offset == 0 && url.compare(0, 8, "https://") == 0 ? 8 : offset;
     offset = offset == 0 && url.compare(0, 7, "http://") == 0 ? 7 : offset;
@@ -31,7 +31,7 @@ string getHostPathFromURL(string url) {
 }
 
 vector<string> extractDownloads(string httpText) {
-    string httpRaw = reformatHttpResponse(httpText);
+    string httpRaw = reformatHttp(httpText);
 
     const string urlStart[] = {"href=\"", "href = \""};
 
@@ -57,7 +57,7 @@ vector<string> extractDownloads(string httpText) {
         }
     }
 
-    string httpRawImage = reformatHttpResponse(httpText);
+    string httpRawImage = reformatHttp(httpText);
 
     const string imgStart[] = {"src=\"", "src = \""};
 
@@ -83,7 +83,7 @@ vector<string> extractDownloads(string httpText) {
 }
 
 string extractCookie(string httpText) {
-    string httpRaw = reformatHttpResponse(httpText);
+    string httpRaw = reformatHttp(httpText);
 
     const string urlStart = "set-cookie: ";
 
@@ -102,7 +102,7 @@ string extractCookie(string httpText) {
 
 
 vector<pair<string, string> > extractUrls(string httpText) {
-    string httpRaw = reformatHttpResponse(httpText);
+    string httpRaw = reformatHttp(httpText);
 
     const string urlStart[] = {"href=\"", "href = \"", "http://", "https://"};
 
@@ -120,7 +120,7 @@ vector<pair<string, string> > extractUrls(string httpText) {
 
             string url = httpRaw.substr(startPos, endPos - startPos);
 
-            string host = getHostnameFromURL(url);
+            string host = getHost(url);
             if (host == ".") {
                 if (verifyType(url)) {
                     extractedUrls.push_back(make_pair("", url.substr(1)));
@@ -130,8 +130,8 @@ vector<pair<string, string> > extractUrls(string httpText) {
                     extractedUrls.push_back(make_pair("", "/" + url));
                 }
             } else if (verifyUrl(url)) {
-                string urlDomain = getHostnameFromURL(url);
-                extractedUrls.push_back(make_pair(urlDomain, getHostPathFromURL(url)));
+                string urlDomain = getHost(url);
+                extractedUrls.push_back(make_pair(urlDomain, getPath(url)));
             }
 
             httpRaw.erase(0, endPos);
@@ -141,7 +141,7 @@ vector<pair<string, string> > extractUrls(string httpText) {
 }
 
 bool verifyUrl(string url) {
-    string urlDomain = getHostnameFromURL(url);
+    string urlDomain = getHost(url);
 
     if (urlDomain != "" && !verifyDomain(urlDomain)) return false;
 
@@ -175,7 +175,7 @@ bool hasSuffix(string str, string suffix) {
     return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
-string reformatHttpResponse(string text) {
+string reformatHttp(string text) {
     string allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01233456789.,/\":#?+-_= ";
     map<char, char> mm;
     for (char ch: allowedChars) mm[ch] = ch;
