@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++11 -g -Wall
+CFLAGS = -std=c++11 -g -Wall -pthread
 
 crawler: crawler.o socket.o parser.o
 	$(CC) $(CFLAGS) -o crawler crawler.o socket.o parser.o

@@ -73,6 +73,38 @@ string ClientSocket::createHttpRequestWithCookie(string host, string path, strin
     return request;
 }
 
+string ClientSocket::getCookie() {
+    if (!this->startConnection().empty()) {
+        return "";
+    }
+
+    string send_data = createHttpRequest(hostname.first, hostname.second);
+    if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0) {
+        return "";
+    }
+
+    char recv_data[1024];
+    int totalBytesRead = 0;
+    string httpResponse = "";
+    while (true) {
+        bzero(recv_data, sizeof(recv_data));
+        int bytesRead = recv(sock, recv_data, sizeof(recv_data), 0);
+
+        if (bytesRead > 0) {
+            string ss(recv_data);
+            httpResponse += ss;
+            totalBytesRead += bytesRead;
+        } else {
+            break;
+        }
+    }
+
+    string cookie = extractCookie(httpResponse);
+
+    return cookie;
+
+}
+
 char *removeHTTPHeader(char *buffer, int &bodySize) {
     char *t = strstr(buffer, "\r\n\r\n");
     t = t + 4;
@@ -115,7 +147,7 @@ string getFileName(string path) {
     return output;
 }
 
-SiteStats ClientSocket::startDiscovering(string directory) {
+SiteStats ClientSocket::startDiscovering(string directory, string cookie) {
     SiteStats stats;
     stats.hostname = hostname.first;
 
@@ -125,7 +157,7 @@ SiteStats ClientSocket::startDiscovering(string directory) {
         return stats;
     }
 
-    string send_data = createHttpRequest(stats.hostname, path);
+    string send_data = createHttpRequestWithCookie(stats.hostname, path, cookie);
     if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0) {
         stats.numberOfPagesFailed++;
         return stats;
@@ -155,7 +187,6 @@ SiteStats ClientSocket::startDiscovering(string directory) {
 
     file.close();
 
-
     vector<string> downloadLinks = extractDownloads(httpResponse);
 
     vector<pair<string, string>> downloadUrls;
@@ -178,11 +209,6 @@ SiteStats ClientSocket::startDiscovering(string directory) {
 
     this->closeConnection();
 
-    string cookie = extractCookie(httpResponse);
-    if (!cookie.empty()) {
-
-    }
-
 
     vector<pair<string, string>> extractedUrls = extractUrls(httpResponse);
     for (auto url : extractedUrls) {
@@ -200,12 +226,11 @@ SiteStats ClientSocket::startDiscovering(string directory) {
     }
 
     for (auto link : downloadUrls) {
-        string fileName =
         this->startConnection();
-        string send_data = createHttpRequest(link.first, link.second);
+        string send_data = createHttpRequestWithCookie(link.first, link.second, cookie);
         send(sock, send_data.c_str(), strlen(send_data.c_str()), 0);
 
-        getPicture(sock, 1024, getFileName(link.second));
+        getPicture(sock, 1024, directory + getFileName(link.second));
 
         this->closeConnection();
     }

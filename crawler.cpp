@@ -38,7 +38,7 @@ void initialize();
 
 void schedule();
 
-void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState);
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie);
 
 int main(int argc, char *argv[]) {
     /*if (argc < 2) {
@@ -76,6 +76,15 @@ int main(int argc, char *argv[]) {
 
 void initialize() {
     crawlerState.threadsCount = 0;
+    ClientSocket clientSocket = ClientSocket(make_pair(getHostnameFromURL(config.startUrl), getHostPathFromURL(config.startUrl)), config.port);
+    for (int i = 1; i <= config.maxThreads; i ++) {
+        string cookie = clientSocket.getCookie();
+        if (cookie.empty()) {
+            cerr << "Unable to connect to start Url" << endl;
+            exit(0);
+        }
+        crawlerState.pendingCookies.push(cookie);
+    }
     crawlerState.pendingSites.push(make_pair(getHostnameFromURL(config.startUrl), getHostPathFromURL(config.startUrl)));
     crawlerState.discoveredSites[getHostnameFromURL(config.startUrl) + getHostPathFromURL(config.startUrl)] = true;
 }
@@ -85,10 +94,14 @@ void schedule() {
         m_mutex.lock();
         threadFinished = false;
         while (!crawlerState.pendingSites.empty() && crawlerState.threadsCount < config.maxThreads) {
+            string cookie =  crawlerState.pendingCookies.front();
+            crawlerState.pendingCookies.pop();
+            crawlerState.pendingCookies.push(cookie);
+
             pair<string, string> nextSite = crawlerState.pendingSites.front();
             crawlerState.pendingSites.pop();
             crawlerState.threadsCount++;
-            thread t = thread(startCrawler, nextSite, ref(crawlerState));
+            thread t = thread(startCrawler, nextSite, ref(crawlerState), cookie);
             if (t.joinable()) t.detach();
         }
         m_mutex.unlock();
@@ -97,9 +110,9 @@ void schedule() {
     }
 }
 
-void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState) {
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie) {
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
-    SiteStats stats = clientSocket.startDiscovering(config.directory);
+    SiteStats stats = clientSocket.startDiscovering(config.directory, cookie);
 
     for (int i = 0; i < stats.discoveredPages.size(); i++) {
         pair<string,string> site = stats.discoveredPages[i];
