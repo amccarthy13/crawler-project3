@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     bool portFlag = true;
     bool directoryFlag = true;
     if (argc < 2) {
-        cout << "No flags required" << endl;
+        cout << "No flags provided" << endl;
         return 0;
     }
     for (int i = 1; i < argc - 1; i++) {
