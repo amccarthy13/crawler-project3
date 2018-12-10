@@ -152,11 +152,13 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
 
     string path = hostname.second;
     if (!this->startConnection().empty()) {
+        cerr << "Connection for " + hostname.first + hostname.second + " failed";
         return stats;
     }
 
     string send_data = createHttpRequestWithCookie(stats.hostname, path, cookie);
     if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0) {
+        cerr << "Connection for " + hostname.first + hostname.second + " failed";
         return stats;
     }
 
@@ -225,7 +227,7 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
     for (auto link : downloadUrls) {
         this->startConnection();
         string send_data = createHttpRequestWithCookie(link.first, link.second, cookie);
-        if (!(send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0)) {
+        if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) >= 0) {
             getPicture(sock, 1024, directory + getFileName(link.second));
         }
 

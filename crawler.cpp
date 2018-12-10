@@ -44,7 +44,7 @@ void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, stri
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        cout << "Invalid Parameters" << endl;
+        cout << "Not enough flags provided" << endl;
         return 0;
     }
     for (int i = 1; i < argc - 1; i++) {
@@ -67,9 +67,16 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    if (config.directory.empty()) {
+        cout
+                << "Note: no save directory for downloaded files provided.\nFiles are being saved to working directory.\n\"make clean\" will erase all downloaded file types as well as .o and .exe files"
+                << endl;
+    }
+
     if (!config.directory.empty() && endChar != '/') {
         config.directory = config.directory + "/";
     }
+
     initialize();
     schedule();
     cout << "Crawler Finished" << endl;
