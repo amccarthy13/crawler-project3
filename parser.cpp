@@ -49,7 +49,7 @@ vector<string> extractDownloads(string httpText) {
 
             string url = httpRaw.substr(startPos, endPos - startPos);
 
-            if (!verifyType(url)) {
+            if (!verifyDomain(url)) {
                 extractedUrls.push_back(url);
             }
 
@@ -71,7 +71,7 @@ vector<string> extractDownloads(string httpText) {
 
             string url = httpRawImage.substr(startPos, endPos - startPos);
 
-            if (!verifyType(url)) {
+            if (!verifyDomain(url)) {
                 extractedUrls.push_back(url);
             }
 
@@ -181,7 +181,7 @@ bool verifyUrl(string url) {
 }
 
 bool verifyType(string url) {
-    string forbiddenTypes[] = {".css", ".js", ".pdf", ".png", ".jpeg", ".jpg", ".ico"};
+    string forbiddenTypes[] = {".css", ".js", ".pdf", ".png", ".jpeg", ".jpg", ".ico", ".zip", ".json", ".gif"};
     for (auto type : forbiddenTypes)
         if (url.find(type) != string::npos) return false;
     return true;

@@ -122,7 +122,7 @@ void initialize() {
     crawlerState.threadsCount = 0;
     ClientSocket clientSocket = ClientSocket(
             make_pair(getHost(config.startUrl), getPath(config.startUrl)), config.port);
-    for (int i = 1; i <= config.maxThreads * 2; i++) {
+    for (int i = 1; i <= config.maxThreads * 3; i++) {
         string cookie = clientSocket.getCookie();
         if (cookie.empty()) {
             cerr << "Unable to connect to start Url" << endl;
@@ -188,6 +188,8 @@ void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, int 
 void startDownload(pair<string, string> baseUrl, string cookie, string directory) {
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
     m_mutex.lock();
+    cout << "HELP" << endl;
+    cout << baseUrl.first + baseUrl.second << endl;
     if (clientSocket.startDownload(directory, cookie)) {
         std::this_thread::sleep_for(chrono::seconds(2));
         crawlerState.pendingDownloads.push(baseUrl);
