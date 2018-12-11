@@ -80,7 +80,10 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler.cpp">
+		<Unit filename="/Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-1.cpp">
+			<Option target="untitled"/>
+		</Unit>
+		<Unit filename="/Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-2.cpp">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/Users/andrewmccarthy/Documents/GitHub/crawler-project3/parser.cpp">

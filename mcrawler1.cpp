@@ -28,7 +28,7 @@ typedef struct {
 
 struct CrawlerState {
     int threadsCount;
-    queue<string> pendingCookies;
+    string cookie;
     queue<pair<string, string>> pendingDownloads;
     map<string, bool> discoveredDownloads;
     queue<pair<string, string>> pendingSites;
@@ -122,14 +122,12 @@ void initialize() {
     crawlerState.threadsCount = 0;
     ClientSocket clientSocket = ClientSocket(
             make_pair(getHost(config.startUrl), getPath(config.startUrl)), config.port);
-    for (int i = 1; i <= config.maxThreads * 3; i++) {
-        string cookie = clientSocket.getCookie();
-        if (cookie.empty()) {
-            cerr << "Unable to connect to start Url" << endl;
-            exit(1);
-        }
-        crawlerState.pendingCookies.push(cookie);
+    string cookie = clientSocket.getCookie();
+    if (cookie.empty()) {
+        cerr << "Unable to connect to start Url" << endl;
+        exit(1);
     }
+    crawlerState.cookie = cookie;
     crawlerState.pendingSites.push(make_pair(getHost(config.startUrl), getPath(config.startUrl)));
     crawlerState.discoveredSites[getHost(config.startUrl) + getPath(config.startUrl)] = true;
 }
@@ -147,9 +145,7 @@ void schedule() {
         m_mutex.lock();
         threadFinished = false;
         while (!crawlerState.pendingDownloads.empty() && crawlerState.threadsCount < config.maxThreads) {
-            string cookie = crawlerState.pendingCookies.front();
-            crawlerState.pendingCookies.pop();
-            crawlerState.pendingCookies.push(cookie);
+            string cookie = crawlerState.cookie;
 
             pair<string, string> nextDownload = crawlerState.pendingDownloads.front();
             crawlerState.pendingDownloads.pop();
@@ -189,7 +185,7 @@ void startDownload(pair<string, string> baseUrl, string cookie, string directory
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
     m_mutex.lock();
     if (clientSocket.startDownload(directory, cookie)) {
-        std::this_thread::sleep_for(chrono::seconds(2));
+        std::this_thread::sleep_for(chrono::milliseconds(1500));
         crawlerState.pendingDownloads.push(baseUrl);
     }
 
@@ -199,3 +195,4 @@ void startDownload(pair<string, string> baseUrl, string cookie, string directory
 
     m_condVar.notify_one();
 }
+

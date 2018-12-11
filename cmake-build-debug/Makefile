@@ -123,32 +123,59 @@ untitled/fast:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/build
 .PHONY : untitled/fast
 
-crawler.o: crawler.cpp.o
+crawler-1.o: crawler-1.cpp.o
 
-.PHONY : crawler.o
+.PHONY : crawler-1.o
 
 # target to build an object file
-crawler.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler.cpp.o
-.PHONY : crawler.cpp.o
+crawler-1.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-1.cpp.o
+.PHONY : crawler-1.cpp.o
 
-crawler.i: crawler.cpp.i
+crawler-1.i: crawler-1.cpp.i
 
-.PHONY : crawler.i
+.PHONY : crawler-1.i
 
 # target to preprocess a source file
-crawler.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler.cpp.i
-.PHONY : crawler.cpp.i
+crawler-1.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-1.cpp.i
+.PHONY : crawler-1.cpp.i
 
-crawler.s: crawler.cpp.s
+crawler-1.s: crawler-1.cpp.s
 
-.PHONY : crawler.s
+.PHONY : crawler-1.s
 
 # target to generate assembly for a file
-crawler.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler.cpp.s
-.PHONY : crawler.cpp.s
+crawler-1.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-1.cpp.s
+.PHONY : crawler-1.cpp.s
+
+crawler-2.o: crawler-2.cpp.o
+
+.PHONY : crawler-2.o
+
+# target to build an object file
+crawler-2.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-2.cpp.o
+.PHONY : crawler-2.cpp.o
+
+crawler-2.i: crawler-2.cpp.i
+
+.PHONY : crawler-2.i
+
+# target to preprocess a source file
+crawler-2.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-2.cpp.i
+.PHONY : crawler-2.cpp.i
+
+crawler-2.s: crawler-2.cpp.s
+
+.PHONY : crawler-2.s
+
+# target to generate assembly for a file
+crawler-2.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-2.cpp.s
+.PHONY : crawler-2.cpp.s
 
 parser.o: parser.cpp.o
 
@@ -213,9 +240,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... untitled"
-	@echo "... crawler.o"
-	@echo "... crawler.i"
-	@echo "... crawler.s"
+	@echo "... crawler-1.o"
+	@echo "... crawler-1.i"
+	@echo "... crawler-1.s"
+	@echo "... crawler-2.o"
+	@echo "... crawler-2.i"
+	@echo "... crawler-2.s"
 	@echo "... parser.o"
 	@echo "... parser.i"
 	@echo "... parser.s"

@@ -57,18 +57,18 @@ include CMakeFiles/untitled.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/untitled.dir/flags.make
 
-CMakeFiles/untitled.dir/crawler.cpp.o: CMakeFiles/untitled.dir/flags.make
-CMakeFiles/untitled.dir/crawler.cpp.o: ../crawler.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/andrewmccarthy/Documents/GitHub/crawler-project3/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/untitled.dir/crawler.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/crawler.cpp.o -c /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler.cpp
+CMakeFiles/untitled.dir/crawler-1.cpp.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/crawler-1.cpp.o: ../crawler-1.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/andrewmccarthy/Documents/GitHub/crawler-project3/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/untitled.dir/crawler-1.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/crawler-1.cpp.o -c /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-1.cpp
 
-CMakeFiles/untitled.dir/crawler.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/crawler.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler.cpp > CMakeFiles/untitled.dir/crawler.cpp.i
+CMakeFiles/untitled.dir/crawler-1.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/crawler-1.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-1.cpp > CMakeFiles/untitled.dir/crawler-1.cpp.i
 
-CMakeFiles/untitled.dir/crawler.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/crawler.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler.cpp -o CMakeFiles/untitled.dir/crawler.cpp.s
+CMakeFiles/untitled.dir/crawler-1.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/crawler-1.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-1.cpp -o CMakeFiles/untitled.dir/crawler-1.cpp.s
 
 CMakeFiles/untitled.dir/parser.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/parser.cpp.o: ../parser.cpp
@@ -96,21 +96,36 @@ CMakeFiles/untitled.dir/socket.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/socket.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/andrewmccarthy/Documents/GitHub/crawler-project3/socket.cpp -o CMakeFiles/untitled.dir/socket.cpp.s
 
+CMakeFiles/untitled.dir/crawler-2.cpp.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/crawler-2.cpp.o: ../crawler-2.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/andrewmccarthy/Documents/GitHub/crawler-project3/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/untitled.dir/crawler-2.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/crawler-2.cpp.o -c /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-2.cpp
+
+CMakeFiles/untitled.dir/crawler-2.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/crawler-2.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-2.cpp > CMakeFiles/untitled.dir/crawler-2.cpp.i
+
+CMakeFiles/untitled.dir/crawler-2.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/crawler-2.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/andrewmccarthy/Documents/GitHub/crawler-project3/crawler-2.cpp -o CMakeFiles/untitled.dir/crawler-2.cpp.s
+
 # Object files for target untitled
 untitled_OBJECTS = \
-"CMakeFiles/untitled.dir/crawler.cpp.o" \
+"CMakeFiles/untitled.dir/crawler-1.cpp.o" \
 "CMakeFiles/untitled.dir/parser.cpp.o" \
-"CMakeFiles/untitled.dir/socket.cpp.o"
+"CMakeFiles/untitled.dir/socket.cpp.o" \
+"CMakeFiles/untitled.dir/crawler-2.cpp.o"
 
 # External object files for target untitled
 untitled_EXTERNAL_OBJECTS =
 
-untitled: CMakeFiles/untitled.dir/crawler.cpp.o
+untitled: CMakeFiles/untitled.dir/crawler-1.cpp.o
 untitled: CMakeFiles/untitled.dir/parser.cpp.o
 untitled: CMakeFiles/untitled.dir/socket.cpp.o
+untitled: CMakeFiles/untitled.dir/crawler-2.cpp.o
 untitled: CMakeFiles/untitled.dir/build.make
 untitled: CMakeFiles/untitled.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/andrewmccarthy/Documents/GitHub/crawler-project3/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable untitled"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/andrewmccarthy/Documents/GitHub/crawler-project3/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable untitled"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/untitled.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
