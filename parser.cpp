@@ -102,10 +102,11 @@ string extractCookie(string httpText) {
         if (i == '=') {
             break;
         }
+        count++;
     }
     string front = cookie.substr(0, count);
     string back = cookie.substr(count, cookie.length());
-    for (auto & c: front) c = toupper(c);
+    for (auto &c: front) c = toupper(c);
     string output = front + back;
     return output;
 }

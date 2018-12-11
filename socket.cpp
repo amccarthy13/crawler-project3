@@ -98,6 +98,7 @@ string ClientSocket::getCookie() {
         }
     }
 
+
     string cookie = extractCookie(httpResponse);
 
     return cookie;
