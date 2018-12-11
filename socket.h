@@ -13,6 +13,7 @@ typedef struct {
     string hostname;
     vector<pair <string, string> > linkedSites;
     vector<pair <string, string> > discoveredPages;
+    vector<pair <string, string> > discoveredDownloads;
 } SiteStats;
 
 class ClientSocket {
@@ -32,7 +33,8 @@ class ClientSocket {
 public:
     explicit ClientSocket(pair<string, string> hostname, int port = 80);
 
-    SiteStats startDiscovering(string directory, string cookie, int count);
+    SiteStats startDiscovering(string directory, int count);
+    bool startDownload(string directory, string cookie);
 
     string getCookie();
 };

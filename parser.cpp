@@ -97,7 +97,34 @@ string extractCookie(string httpText) {
 
     string cookie = httpRaw.substr(startPos, endPos - startPos);
 
-    return cookie;
+    int count = 0;
+    for (char i : cookie) {
+        if (i == '=') {
+            break;
+        }
+    }
+    string front = cookie.substr(0, count);
+    string back = cookie.substr(count, cookie.length());
+    for (auto & c: front) c = toupper(c);
+    string output = front + back;
+    return output;
+}
+
+int getCode(string httpText) {
+    string httpRaw = reformatHttp(httpText);
+    string coinCode = "402 insert coin to continue";
+    int startPos = httpRaw.find(coinCode);
+    if (startPos != string::npos) {
+        return 1;
+    }
+
+    string notFoundCode = "404 not found";
+    int twoPos = httpRaw.find(notFoundCode);
+    if (twoPos != string::npos) {
+        return 2;
+    }
+
+    return 0;
 }
 
 

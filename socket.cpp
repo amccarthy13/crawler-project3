@@ -115,13 +115,23 @@ char *removeHTTPHeader(char *buffer, int &bodySize) {
     return t;
 }
 
-void getPicture(const int &socketfd, const int &bSize, string pictureName) {
-    std::ofstream file(pictureName, std::ofstream::binary | std::ofstream::out);
+int getPicture(const int &socketfd, const int &bSize, string pictureName) {
     char buffer[bSize];
     ssize_t bReceived;
 
     bReceived = recv(socketfd, buffer, bSize, 0);
     int bodySize = 0;
+
+    int returnCode = getCode(buffer);
+
+    if (returnCode == 2) {
+        return 0;
+    }
+    if (returnCode == 1) {
+        return 1;
+    }
+
+    std::ofstream file(pictureName, std::ofstream::binary | std::ofstream::out);
 
     char *t = removeHTTPHeader(buffer, bodySize);
     bodySize = bReceived - bodySize;
@@ -135,6 +145,7 @@ void getPicture(const int &socketfd, const int &bSize, string pictureName) {
     }
 
     file.close();
+    return 0;
 }
 
 string getFileName(string path) {
@@ -143,7 +154,7 @@ string getFileName(string path) {
     return output;
 }
 
-SiteStats ClientSocket::startDiscovering(string directory, string cookie, int count) {
+SiteStats ClientSocket::startDiscovering(string directory, int count) {
     SiteStats stats;
     stats.hostname = hostname.first;
 
@@ -153,7 +164,7 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
         return stats;
     }
 
-    string send_data = createHttpRequestWithCookie(stats.hostname, path, cookie);
+    string send_data = createHttpRequest(stats.hostname, path);
     if (send(sock, send_data.c_str(), strlen(send_data.c_str()), 0) < 0) {
         cerr << "Connection for " + hostname.first + hostname.second + " failed\n" << endl;
         return stats;
@@ -221,16 +232,31 @@ SiteStats ClientSocket::startDiscovering(string directory, string cookie, int co
         }
     }
 
-    for (auto link : downloadUrls) {
-        this->startConnection();
-        string download_send_data = createHttpRequestWithCookie(link.first, link.second, cookie);
-        cout << download_send_data << endl;
-        if (send(sock, download_send_data.c_str(), strlen(download_send_data.c_str()), 0) >= 0) {
-            getPicture(sock, 1024, directory + getFileName(link.second));
-        }
-
-        this->closeConnection();
-    }
+    stats.discoveredDownloads = downloadUrls;
 
     return stats;
+}
+
+bool ClientSocket::startDownload(string directory, string cookie) {
+    this->startConnection();
+
+    string download_send_data = createHttpRequestWithCookie(hostname.first, hostname.second, cookie);
+    if (send(sock, download_send_data.c_str(), strlen(download_send_data.c_str()), 0) >= 0) {
+        int code = getPicture(sock, 1024, directory + getFileName(hostname.second));
+        if (code == 1) {
+            return true;
+        }
+    } else {
+        while (true) {
+            if (send(sock, download_send_data.c_str(), strlen(download_send_data.c_str()), 0) >= 0) {
+                int code = getPicture(sock, 1024, directory + getFileName(hostname.second));
+                if (code == 1) {
+                    return true;
+                }
+                break;
+            }
+        }
+    }
+    this->closeConnection();
+    return false;
 }

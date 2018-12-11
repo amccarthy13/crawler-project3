@@ -14,6 +14,8 @@
 #include <condition_variable>
 #include <stdio.h>
 #include <cstdlib>
+#include <chrono>
+
 
 using namespace std;
 
@@ -27,6 +29,8 @@ typedef struct {
 struct CrawlerState {
     int threadsCount;
     queue<string> pendingCookies;
+    queue<pair<string, string>> pendingDownloads;
+    map<string, bool> discoveredDownloads;
     queue<pair<string, string>> pendingSites;
     map<string, bool> discoveredSites;
 };
@@ -43,7 +47,9 @@ void initialize();
 
 void schedule();
 
-void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie, int count);
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, int count);
+
+void startDownload(pair<string, string> baseUrl, string cookie, string directory);
 
 char str[256];
 
@@ -116,7 +122,7 @@ void initialize() {
     crawlerState.threadsCount = 0;
     ClientSocket clientSocket = ClientSocket(
             make_pair(getHost(config.startUrl), getPath(config.startUrl)), config.port);
-    for (int i = 1; i <= config.maxThreads; i++) {
+    for (int i = 1; i <= config.maxThreads * 2; i++) {
         string cookie = clientSocket.getCookie();
         if (cookie.empty()) {
             cerr << "Unable to connect to start Url" << endl;
@@ -129,31 +135,39 @@ void initialize() {
 }
 
 void schedule() {
-    while (crawlerState.threadsCount != 0 || !crawlerState.pendingSites.empty()) {
+    while (!crawlerState.pendingSites.empty()) {
+        pair<string, string> nextSite = crawlerState.pendingSites.front();
+        crawlerState.pendingSites.pop();
+
+        pageCount++;
+
+        startCrawler(nextSite, ref(crawlerState), pageCount);
+    }
+    while (crawlerState.threadsCount != 0 || !crawlerState.pendingDownloads.empty()) {
         m_mutex.lock();
         threadFinished = false;
-        while (!crawlerState.pendingSites.empty() && crawlerState.threadsCount < config.maxThreads) {
+        while (!crawlerState.pendingDownloads.empty() && crawlerState.threadsCount < config.maxThreads) {
             string cookie = crawlerState.pendingCookies.front();
             crawlerState.pendingCookies.pop();
             crawlerState.pendingCookies.push(cookie);
 
-            pair<string, string> nextSite = crawlerState.pendingSites.front();
-            crawlerState.pendingSites.pop();
+            pair<string, string> nextDownload = crawlerState.pendingDownloads.front();
+            crawlerState.pendingDownloads.pop();
             crawlerState.threadsCount++;
 
-            pageCount++;
-            thread t = thread(startCrawler, nextSite, ref(crawlerState), cookie, pageCount);
+            thread t = thread(startDownload, nextDownload, cookie, config.directory);
             if (t.joinable()) t.detach();
         }
         m_mutex.unlock();
+
         unique_lock<mutex> m_lock(m_mutex);
         while (!threadFinished) m_condVar.wait(m_lock);
     }
 }
 
-void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, string cookie, int count) {
+void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, int count) {
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
-    SiteStats stats = clientSocket.startDiscovering(config.directory, cookie, count);
+    SiteStats stats = clientSocket.startDiscovering(config.directory, count);
 
     for (int i = 0; i < stats.discoveredPages.size(); i++) {
         pair<string, string> site = stats.discoveredPages[i];
@@ -162,6 +176,23 @@ void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, stri
             crawlerState.discoveredSites[site.first + site.second] = true;
         }
     }
+    for (int j = 0; j < stats.discoveredDownloads.size(); j++) {
+        pair<string, string> download = stats.discoveredDownloads[j];
+        if (!crawlerState.discoveredDownloads[download.first + download.second]) {
+            crawlerState.pendingDownloads.push(download);
+            crawlerState.discoveredDownloads[download.first + download.second] = true;
+        }
+    }
+}
+
+void startDownload(pair<string, string> baseUrl, string cookie, string directory) {
+    ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
+    m_mutex.lock();
+    if (clientSocket.startDownload(directory, cookie)) {
+        std::this_thread::sleep_for(chrono::seconds(2));
+        crawlerState.pendingDownloads.push(baseUrl);
+    }
+
     crawlerState.threadsCount--;
     threadFinished = true;
     m_mutex.unlock();

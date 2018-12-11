@@ -18,5 +18,6 @@ bool verifyType(string url);
 bool hasSuffix(string str, string suffix);
 string reformatHttp(string text);
 string extractCookie(string httpText);
+int getCode(string httpText);
 
 #endif
