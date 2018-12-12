@@ -9,7 +9,7 @@
 #include <fstream>
 #include <thread>
 #include <algorithm>
-#include <string>
+#include <string.h>
 
 using namespace std;
 using namespace std::chrono;
