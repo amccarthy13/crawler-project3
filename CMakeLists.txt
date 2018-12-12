@@ -3,4 +3,4 @@ project(untitled)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(untitled mcrawler2.cpp socket.h parser.h parser.cpp socket.cpp mcrawler1.cpp)
+add_executable(untitled mcrawl2.cpp socket.h parser.h parser.cpp socket.cpp mcrawl1.cpp)
