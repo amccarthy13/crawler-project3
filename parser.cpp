@@ -32,14 +32,16 @@ string getPath(string url) {
 
 vector<string> extractDownloads(string httpText) {
     string httpRaw = reformatHttp(httpText);
+    string temp = httpRaw;
 
-    const string urlStart[] = {"href=\"", "href = \""};
+    string urlStart[] = {"href=\"", "href = \"", "href=\'", "href = \'"};
 
-    const string urlEndChars = "\"#, ";
+    const string urlEndChars = "\"\'#, ";
 
     vector<string> extractedUrls;
 
     for (auto startText : urlStart) {
+        httpRaw = temp;
         while (true) {
             int startPos = httpRaw.find(startText);
             if (startPos == string::npos) break;
@@ -48,8 +50,7 @@ vector<string> extractDownloads(string httpText) {
             int endPos = httpRaw.find_first_of(urlEndChars, startPos);
 
             string url = httpRaw.substr(startPos, endPos - startPos);
-
-            if (!verifyDomain(url)) {
+            if (!verifyDomain(url) && findDomain(url)) {
                 extractedUrls.push_back(url);
             }
 
@@ -59,9 +60,10 @@ vector<string> extractDownloads(string httpText) {
 
     string httpRawImage = reformatHttp(httpText);
 
-    const string imgStart[] = {"src=\"", "src = \""};
+    const string imgStart[] = {"src=\"", "src = \"", "src=\'", "src = \'"};
 
     for (auto startText : imgStart) {
+        httpRaw = temp;
         while (true) {
             int startPos = httpRawImage.find(startText);
             if (startPos == string::npos) break;
@@ -131,14 +133,16 @@ int getCode(string httpText) {
 
 vector<pair<string, string> > extractUrls(string httpText) {
     string httpRaw = reformatHttp(httpText);
+    string temp = httpRaw;
 
-    const string urlStart[] = {"href=\"", "href = \"", "http://", "https://"};
+    const string urlStart[] = {"href=\"", "href = \"", "href=\'", "href = \'", "http://", "https://"};
 
-    const string urlEndChars = "\"#, ";
+    const string urlEndChars = "\"\'#, ";
 
     vector<pair<string, string> > extractedUrls;
 
     for (auto startText : urlStart) {
+        httpRaw = temp;
         while (true) {
             int startPos = httpRaw.find(startText);
             if (startPos == string::npos) break;
@@ -150,11 +154,11 @@ vector<pair<string, string> > extractUrls(string httpText) {
 
             string host = getHost(url);
             if (host == ".") {
-                if (verifyType(url)) {
+                if (verifyType(url) && findType(url)) {
                     extractedUrls.push_back(make_pair("", url.substr(1)));
                 }
             } else if (host == url) {
-                if (verifyType(url)) {
+                if (verifyType(url) && findType(url)) {
                     extractedUrls.push_back(make_pair("", "/" + url));
                 }
             } else if (verifyUrl(url)) {
@@ -191,13 +195,32 @@ bool verifyType(string url) {
 bool verifyDomain(string url) {
     string allowedDomains[] = {".com", ".sg", ".net", ".co", ".org", ".me", ".edu", ".gov"};
     bool flag = true;
-    for (auto type : allowedDomains)
+    for (auto type : allowedDomains) {
         if (hasSuffix(url, type)) {
             flag = false;
             break;
         }
+    }
     return !flag;
 
+}
+
+bool findDomain(string url) {
+    string allowedDomains[] = {".com", ".sg", ".net", ".co", ".org", ".me", ".edu", ".gov"};
+    for (auto type : allowedDomains) {
+        if (url.find(type) != string::npos) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool findType(string url) {
+    string allowed = ".com";
+    if (url.find(allowed) != string::npos) {
+        return false;
+    }
+    return true;
 }
 
 bool hasSuffix(string str, string suffix) {
@@ -205,7 +228,7 @@ bool hasSuffix(string str, string suffix) {
 }
 
 string reformatHttp(string text) {
-    string allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01233456789.,/\":#?+-_= ";
+    string allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01233456789.,/\":#?+-_=\' ";
     map<char, char> mm;
     for (char ch: allowedChars) mm[ch] = ch;
     mm['\n'] = ' ';

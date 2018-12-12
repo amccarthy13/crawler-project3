@@ -208,6 +208,7 @@ SiteStats ClientSocket::startDiscovering(string directory, int count) {
         memset(recv_data, 0, sizeof(recv_data));
     }
 
+
     file.close();
 
     vector<string> downloadLinks = extractDownloads(httpResponse);
@@ -216,7 +217,6 @@ SiteStats ClientSocket::startDiscovering(string directory, int count) {
     map<string, bool> discoveredDownloads;
 
     for (auto url : downloadLinks) {
-
         string host = getHost(url);
         if (host == ".") {
             if (!discoveredDownloads[url]) {

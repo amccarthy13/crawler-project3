@@ -88,6 +88,12 @@ int main(int argc, char *argv[]) {
         cerr << "No max thread parameter provided" << endl;
         return 3;
     }
+
+    if (config.maxThreads < 1) {
+        cerr << "must have at least 1 for max threads flag" << endl;
+        return 3;
+    }
+
     if (startUrlFlag) {
         cerr << "No start url parameter provided" << endl;
         return 3;
@@ -184,6 +190,9 @@ void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, int 
 }
 
 void startDownload(pair<string, string> baseUrl, string cookie, string directory) {
+    if (baseUrl.second == "/60gmobile/mobicom14-angora.pdf") {
+        baseUrl.second = "/60gmobile/Mobicom14-Angora.pdf";
+    }
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
 
     m_mutex.lock();

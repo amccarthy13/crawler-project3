@@ -19,5 +19,7 @@ bool hasSuffix(string str, string suffix);
 string reformatHttp(string text);
 string extractCookie(string httpText);
 int getCode(string httpText);
+bool findDomain(string url);
+bool findType(string url);
 
 #endif
