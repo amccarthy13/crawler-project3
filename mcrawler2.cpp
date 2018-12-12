@@ -53,6 +53,8 @@ void startDownload(pair<string, string> baseUrl, string directory);
 
 char str[256];
 
+ClientSocket cookieSocket = ClientSocket(make_pair(getHost(config.startUrl), getPath(config.startUrl)), config.port);
+
 int main(int argc, char *argv[]) {
     bool threadFlag = true;
     bool startUrlFlag = true;
@@ -191,7 +193,7 @@ void startDownload(pair<string, string> baseUrl, string directory) {
     m_mutex.lock();
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
     if (clientSocket.startDownload(directory, cookie)) {
-        string newCookie = clientSocket.getCookie();
+        string newCookie = cookieSocket.getCookie();
 
         crawlerState.pendingCookies.push(newCookie);
         crawlerState.pendingCookies.pop();

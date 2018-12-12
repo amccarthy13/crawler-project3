@@ -35,7 +35,7 @@ vector<string> extractDownloads(string httpText) {
 
     const string urlStart[] = {"href=\"", "href = \""};
 
-    const string urlEndChars = "\"#?, ";
+    const string urlEndChars = "\"#, ";
 
     vector<string> extractedUrls;
 
@@ -134,7 +134,7 @@ vector<pair<string, string> > extractUrls(string httpText) {
 
     const string urlStart[] = {"href=\"", "href = \"", "http://", "https://"};
 
-    const string urlEndChars = "\"#?, ";
+    const string urlEndChars = "\"#, ";
 
     vector<pair<string, string> > extractedUrls;
 
@@ -181,7 +181,8 @@ bool verifyUrl(string url) {
 }
 
 bool verifyType(string url) {
-    string forbiddenTypes[] = {".css", ".js", ".pdf", ".png", ".jpeg", ".jpg", ".ico", ".zip", ".json", ".gif"};
+    string forbiddenTypes[] = {".css", ".js", ".pdf", ".png", ".jpeg", ".jpg", ".ico", ".zip", ".gif"};
+    if (url.find(".json") != string::npos) return true;
     for (auto type : forbiddenTypes)
         if (url.find(type) != string::npos) return false;
     return true;

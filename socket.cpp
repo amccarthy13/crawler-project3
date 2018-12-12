@@ -7,6 +7,9 @@
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
+#include <thread>
+#include <algorithm>
+#include <string>
 
 using namespace std;
 using namespace std::chrono;
@@ -159,6 +162,13 @@ SiteStats ClientSocket::startDiscovering(string directory, int count) {
     SiteStats stats;
     stats.hostname = hostname.first;
 
+    string newPath = "";
+
+    int pos = hostname.second.find_last_of("/");
+    if (pos != 0 && pos != string::npos) {
+        newPath = hostname.second.substr(0, pos);
+    }
+
     string path = hostname.second;
     if (!this->startConnection().empty()) {
         cerr << "Connection for " + hostname.first + hostname.second + " failed\n" << endl;
@@ -172,25 +182,30 @@ SiteStats ClientSocket::startDiscovering(string directory, int count) {
     }
 
     char recv_data[1024];
-    int totalBytesRead = 0;
+    ssize_t bReceived;
     string httpResponse = "";
     string fileName = getFileName(path);
     if (fileName.empty() || fileName == "/" || fileName == "index.html") {
         fileName = "index-" + to_string(count) + ".html";
     }
     std::ofstream file(directory + fileName, std::ofstream::binary | std::ofstream::out);
-    while (true) {
-        bzero(recv_data, sizeof(recv_data));
-        int bytesRead = recv(sock, recv_data, sizeof(recv_data), 0);
 
-        if (bytesRead > 0) {
-            file.write(recv_data, bytesRead);
-            string ss(recv_data);
-            httpResponse += ss;
-            totalBytesRead += bytesRead;
-        } else {
-            break;
-        }
+    bReceived = recv(sock, recv_data, sizeof(recv_data), 0);
+    int bodySize = 0;
+
+    char *t = removeHTTPHeader(recv_data, bodySize);
+    bodySize = bReceived - bodySize;
+
+    file.write(t, bodySize);
+    string ss(recv_data);
+    httpResponse += ss;
+    memset(recv_data, 0, sizeof(recv_data));
+
+    while ((bReceived = recv(sock, recv_data, sizeof(recv_data), 0)) > 0) {
+        file.write(recv_data, bReceived);
+        string ss(recv_data);
+        httpResponse += ss;
+        memset(recv_data, 0, sizeof(recv_data));
     }
 
     file.close();
@@ -201,15 +216,16 @@ SiteStats ClientSocket::startDiscovering(string directory, int count) {
     map<string, bool> discoveredDownloads;
 
     for (auto url : downloadLinks) {
+
         string host = getHost(url);
         if (host == ".") {
             if (!discoveredDownloads[url]) {
-                downloadUrls.emplace_back(stats.hostname, url.substr(1));
+                downloadUrls.emplace_back(stats.hostname, newPath + url.substr(1));
                 discoveredDownloads[url] = true;
             }
         } else if (!verifyDomain(host)) {
             if (!discoveredDownloads[url]) {
-                downloadUrls.emplace_back(stats.hostname, "/" + url);
+                downloadUrls.emplace_back(stats.hostname, newPath + "/" + url);
                 discoveredDownloads[url] = true;
             }
         }
@@ -219,11 +235,13 @@ SiteStats ClientSocket::startDiscovering(string directory, int count) {
 
 
     vector<pair<string, string>> extractedUrls = extractUrls(httpResponse);
+
+
     for (auto url : extractedUrls) {
         if (url.first.empty() || url.first == stats.hostname) {
-            if (!discoveredPages[stats.hostname + url.second]) {
-                discoveredPages[stats.hostname + url.second] = true;
-                stats.discoveredPages.emplace_back(stats.hostname, url.second);
+            if (!discoveredPages[stats.hostname + newPath + url.second]) {
+                discoveredPages[stats.hostname + newPath + url.second] = true;
+                stats.discoveredPages.emplace_back(stats.hostname, newPath + url.second);
             }
         } else {
             if (!discoveredLinkedSites[url.first + url.second]) {
@@ -249,6 +267,9 @@ bool ClientSocket::startDownload(string directory, string cookie) {
         }
     } else {
         while (true) {
+            std::this_thread::sleep_for(chrono::milliseconds(500));
+            this->closeConnection();
+            this->startConnection();
             if (send(sock, download_send_data.c_str(), strlen(download_send_data.c_str()), 0) >= 0) {
                 int code = getPicture(sock, 1024, directory + getFileName(hostname.second));
                 if (code == 1) {
