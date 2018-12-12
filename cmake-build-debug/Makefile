@@ -123,59 +123,59 @@ untitled/fast:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/build
 .PHONY : untitled/fast
 
-crawler-1.o: crawler-1.cpp.o
+mcrawler1.o: mcrawler1.cpp.o
 
-.PHONY : crawler-1.o
-
-# target to build an object file
-crawler-1.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-1.cpp.o
-.PHONY : crawler-1.cpp.o
-
-crawler-1.i: crawler-1.cpp.i
-
-.PHONY : crawler-1.i
-
-# target to preprocess a source file
-crawler-1.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-1.cpp.i
-.PHONY : crawler-1.cpp.i
-
-crawler-1.s: crawler-1.cpp.s
-
-.PHONY : crawler-1.s
-
-# target to generate assembly for a file
-crawler-1.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-1.cpp.s
-.PHONY : crawler-1.cpp.s
-
-crawler-2.o: crawler-2.cpp.o
-
-.PHONY : crawler-2.o
+.PHONY : mcrawler1.o
 
 # target to build an object file
-crawler-2.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-2.cpp.o
-.PHONY : crawler-2.cpp.o
+mcrawler1.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mcrawler1.cpp.o
+.PHONY : mcrawler1.cpp.o
 
-crawler-2.i: crawler-2.cpp.i
+mcrawler1.i: mcrawler1.cpp.i
 
-.PHONY : crawler-2.i
+.PHONY : mcrawler1.i
 
 # target to preprocess a source file
-crawler-2.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-2.cpp.i
-.PHONY : crawler-2.cpp.i
+mcrawler1.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mcrawler1.cpp.i
+.PHONY : mcrawler1.cpp.i
 
-crawler-2.s: crawler-2.cpp.s
+mcrawler1.s: mcrawler1.cpp.s
 
-.PHONY : crawler-2.s
+.PHONY : mcrawler1.s
 
 # target to generate assembly for a file
-crawler-2.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/crawler-2.cpp.s
-.PHONY : crawler-2.cpp.s
+mcrawler1.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mcrawler1.cpp.s
+.PHONY : mcrawler1.cpp.s
+
+mcrawler2.o: mcrawler2.cpp.o
+
+.PHONY : mcrawler2.o
+
+# target to build an object file
+mcrawler2.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mcrawler2.cpp.o
+.PHONY : mcrawler2.cpp.o
+
+mcrawler2.i: mcrawler2.cpp.i
+
+.PHONY : mcrawler2.i
+
+# target to preprocess a source file
+mcrawler2.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mcrawler2.cpp.i
+.PHONY : mcrawler2.cpp.i
+
+mcrawler2.s: mcrawler2.cpp.s
+
+.PHONY : mcrawler2.s
+
+# target to generate assembly for a file
+mcrawler2.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mcrawler2.cpp.s
+.PHONY : mcrawler2.cpp.s
 
 parser.o: parser.cpp.o
 
@@ -240,12 +240,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... untitled"
-	@echo "... crawler-1.o"
-	@echo "... crawler-1.i"
-	@echo "... crawler-1.s"
-	@echo "... crawler-2.o"
-	@echo "... crawler-2.i"
-	@echo "... crawler-2.s"
+	@echo "... mcrawler1.o"
+	@echo "... mcrawler1.i"
+	@echo "... mcrawler1.s"
+	@echo "... mcrawler2.o"
+	@echo "... mcrawler2.i"
+	@echo "... mcrawler2.s"
 	@echo "... parser.o"
 	@echo "... parser.i"
 	@echo "... parser.s"

@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     bool portFlag = true;
     bool directoryFlag = true;
     if (argc < 2) {
-        cout << "No flags provided" << endl;
+        cerr << "No flags provided" << endl;
         return 0;
     }
     for (int i = 1; i < argc - 1; i++) {
@@ -185,12 +185,9 @@ void startDownload(pair<string, string> baseUrl, string cookie, string directory
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
     m_mutex.lock();
     if (clientSocket.startDownload(directory, cookie)) {
-        m_mutex.lock();
         string newCookie = clientSocket.getCookie();
         crawlerState.cookie = newCookie;
         crawlerState.pendingDownloads.push(baseUrl);
-    } else {
-        m_mutex.lock();
     }
 
     crawlerState.threadsCount--;
