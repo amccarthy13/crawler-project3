@@ -185,8 +185,12 @@ void startDownload(pair<string, string> baseUrl, string cookie, string directory
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
     m_mutex.lock();
     if (clientSocket.startDownload(directory, cookie)) {
-        std::this_thread::sleep_for(chrono::milliseconds(1500));
+        m_mutex.lock();
+        string newCookie = clientSocket.getCookie();
+        crawlerState.cookie = newCookie;
         crawlerState.pendingDownloads.push(baseUrl);
+    } else {
+        m_mutex.lock();
     }
 
     crawlerState.threadsCount--;

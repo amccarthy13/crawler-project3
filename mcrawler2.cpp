@@ -49,7 +49,7 @@ void schedule();
 
 void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, int count);
 
-void startDownload(pair<string, string> baseUrl, string cookie, string directory);
+void startDownload(pair<string, string> baseUrl, string directory);
 
 char str[256];
 
@@ -155,7 +155,7 @@ void schedule() {
             crawlerState.pendingDownloads.pop();
             crawlerState.threadsCount++;
 
-            thread t = thread(startDownload, nextDownload, cookie, config.directory);
+            thread t = thread(startDownload, nextDownload, config.directory);
             if (t.joinable()) t.detach();
         }
         m_mutex.unlock();
@@ -185,12 +185,22 @@ void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, int 
     }
 }
 
-void startDownload(pair<string, string> baseUrl, string cookie, string directory) {
+void startDownload(pair<string, string> baseUrl, string directory) {
+    string cookie = crawlerState.pendingCookies.front();
+
+    cout << baseUrl.first + baseUrl.second << endl;
+
     ClientSocket clientSocket = ClientSocket(baseUrl, config.port);
-    m_mutex.lock();
     if (clientSocket.startDownload(directory, cookie)) {
-        std::this_thread::sleep_for(chrono::milliseconds(1500));
+        m_mutex.lock();
+        string newCookie = clientSocket.getCookie();
+
+        crawlerState.pendingCookies.pop();
+        crawlerState.pendingCookies.push(newCookie);
+
         crawlerState.pendingDownloads.push(baseUrl);
+    } else {
+        m_mutex.lock();
     }
 
     crawlerState.threadsCount--;
