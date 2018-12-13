@@ -189,7 +189,9 @@ void startCrawler(pair<string, string> baseUrl, CrawlerState &crawlerState, int 
 }
 
 void startDownload(pair<string, string> baseUrl, string directory) {
-    cout << baseUrl.first + baseUrl.second << endl;
+    if (baseUrl.second == "/60gmobile/mobicom14-angora.pdf") {
+        baseUrl.second = "/60gmobile/Mobicom14-Angora.pdf";
+    }
     string cookie = crawlerState.pendingCookies.front();
 
     m_mutex.lock();
